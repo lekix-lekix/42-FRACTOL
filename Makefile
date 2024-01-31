@@ -6,7 +6,7 @@
 #    By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/18 12:11:49 by kipouliq          #+#    #+#              #
-#    Updated: 2024/01/30 17:36:17 by kipouliq         ###   ########.fr        #
+#    Updated: 2024/01/31 13:38:27 by kipouliq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,9 +17,11 @@ SRC = ./main.c \
 
 OBJ = $(SRC:.c=.o)
 
-CC = cc
+CC = gcc
 
 FLAGS = -Wall -Wextra -Werror -g3
+
+PATH_MLX = ./minilibx-linux
 
 PATH_LIBFT = ./megalibft
 
@@ -27,11 +29,12 @@ NEW_PATH_LIBFT = .
 
 LIBFT = ./megalibft/megalibft.a
 
+MLX_OPT = -lmlx -lXext
+
 all : $(NAME)
 
 $(NAME) : $(OBJ)
-	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o $(NAME)
-
+	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux $(SRC) -L /usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o $(NAME)
 
 bonus : $(BONUS_OBJS)
 	make -C $(PATH_LIBFT)

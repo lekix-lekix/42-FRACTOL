@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 18:07:02 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/01/30 17:16:52 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/01/31 18:25:34 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,17 +31,25 @@ t_complex	add_complex(t_complex nb1, t_complex nb2)
 	return (result);
 }
 
-t_complex	mandelbrot_recursive(int i, t_complex nb)
+t_complex	mandelbrot_recursive(int i, int *mandel_i, t_complex nb)
 {
 	t_complex	result;
 
+    printf("coucou\n");
 	if (i == 0)
 	{
 		result.real = 0;
 		result.img = 0;
 		return (result);
 	}
-	result = add_complex(binomial_squares(mandelbrot_recursive(i - 1, nb)), nb);
+	result = add_complex(binomial_squares(mandelbrot_recursive(i - 1, mandel_i, nb)), nb);
+    if (result.real < -2 || result.real > 2 || result.img < -2 || result.img > 2)
+    {
+        *mandel_i = i;
+		result.real = 0;
+		result.img = 0;
+		return (result);
+	}
 	return (result);
 }
 
@@ -49,12 +57,11 @@ t_complex	mandelbrot_recursive(int i, t_complex nb)
 // {
 // 	t_complex coordinates;
 // 	t_complex result;
-
 // 	coordinates.real = 0;
 // 	coordinates.img = 0.5;
 // 	result.real = 0;
 // 	result.img = 0.5;
 //     result = binomial_squares(result);
-// 	coordinates = mandelbrot_recursive(4, coordinates);    
+// 	coordinates = mandelbrot_recursive(200, coordinates);    
 //     printf("reel = %f img = %f\n", coordinates.real, coordinates.img);
 // }

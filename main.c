@@ -1,5 +1,6 @@
 #include "./minilibx-linux/mlx.h"
 #include <stdlib.h>
+#include "math.h"
 #include "./fractol.h"
 #include <stdio.h>
 
@@ -14,31 +15,41 @@ void    my_mlx_px_put(t_data *img, int x, int y, int color)
 t_complex   pixel_to_complex(int x, int y, int height, int width)
 {
     t_complex coordinates;
+    float x_percent;
+    float y_percent;
+    
+    x_percent = (float) x / (float) width;
+    y_percent = (float) y / (float) height;
 
-    coordinates.real = (float) -2 + (x / width) * (1 - (-2));
-    coordinates.img = (float) -1 + (y / height) * (1 - (-1));
+    coordinates.real = -2 + (2 - (-2)) * x_percent;
+    coordinates.img = -2 + (2 - (-2)) * y_percent;
 
     return (coordinates);
 }
 
-void    rectangle(t_data *img, int x, int y)
+void    rectangle(t_data *img, int width, int height)
 {
     int i;
     int j;
+    int mandel_i;
     t_complex   px_tst;
     t_complex   result;
 
     i = 0;
-    while (i < y)
+    mandel_i = 0;
+    while (i < height)
     {
         j = 0;
-        while (j < x)
+        while (j < width)
         {
-            px_tst = pixel_to_complex(i, j, 800, 800);
-            result = mandelbrot_recursive(4, px_tst);
-            // printf("x %f y %f resul.real %f result.img %f\n", px_tst.real, px_tst.img, result.real, result.img);
-            if ((result.real < 2  && result.real > -2) && (result.img < 2 && result.img > -2))
-                my_mlx_px_put(img, i, j, 0x00FFFFFF);
+            px_tst = pixel_to_complex(i, j, height, width);
+            result = mandelbrot_recursive(13, &i, px_tst);
+            if (mandel_i != 0)
+                printf("yes\n");
+            if (result.real < -2 || result.real > 2 || result.img < -2 || result.img > 2)
+                my_mlx_px_put(img, i, j, 0x000066FF);
+            else if (isnan(result.real) || isnan(result.img))
+                my_mlx_px_put(img, i, j, 0x00000066);
             else
                 my_mlx_px_put(img, i, j, 0x00000000);
             j++;
@@ -78,11 +89,11 @@ int	main(void)
     if (!img)
         return (-1);
     printf("img bpp %d, len %d, endian %d\n", img->bpp, img->line_len, img->endian);
-    rectangle(img, 800, img->line_len);
+    rectangle(img, 800, 800);
     mlx_put_image_to_window(mlx, window, img->img, 0, 0);
-	// img2.img = mlx_new_image(mlx, 400, 400);
-    // img2.addr = mlx_get_data_addr(img2.img, &img2.bpp, &img2.line_len, &img2.endian);
-    // rectangle(&img2, 150, 150, 0x00FF00FF);
-    // mlx_put_image_to_window(mlx, window, img2.img, 100, 100);
 	mlx_loop(mlx);
+    t_complex px;
+
+    px = pixel_to_complex(100, 100, 800, 800);
+    printf("reel %f img %f\n", px.real, px.img);
 }
