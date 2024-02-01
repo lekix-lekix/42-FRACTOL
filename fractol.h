@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:36:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/01/31 18:04:11 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/01 15:50:15 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef struct s_complex
     double   img;
     int     img_square;
 }           t_complex;
-
-t_complex	mandelbrot_recursive(int i, int *mandel_i, t_complex nb);
+    
+int mandelbrot(int i_limit, t_complex nb);
 
 #endif
