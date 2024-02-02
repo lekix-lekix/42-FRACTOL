@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:36:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/01 15:50:15 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/02 13:32:14 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,6 @@ typedef struct s_complex
     int     img_square;
 }           t_complex;
     
-int mandelbrot(int i_limit, t_complex nb);
+int mandelbrot(int max_iter, t_complex nb);
 
 #endif

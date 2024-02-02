@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 18:07:02 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/01 18:33:46 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/02 13:32:24 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int has_escaped(t_complex nb)
     return (nb.real < -2 || nb.real > 2 || nb.img < -2 || nb.img > 2);
 }
 
-int	mandelbrot(int i_limit, t_complex nb)
+int	mandelbrot(int max_iter, t_complex nb)
 {
 	int			i;
 	t_complex	result;
@@ -52,7 +52,7 @@ int	mandelbrot(int i_limit, t_complex nb)
     i = 0;
     result.real = 0;
     result.img = 0;
-    while (i < i_limit && !has_escaped(result))
+    while (i < max_iter && !has_escaped(result))
     {
         result = calc_mandelbrot(result, nb);
         // printf("res = %f | %f\n", result.real, result.img);
