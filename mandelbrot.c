@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 18:07:02 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/02 13:32:24 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/05 17:43:07 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ t_complex	calc_mandelbrot(t_complex mandel, t_complex nb)
 
 int has_escaped(t_complex nb)
 {
-    return (nb.real < -2 || nb.real > 2 || nb.img < -2 || nb.img > 2);
+    return (nb.real < -3 || nb.real > 3 || nb.img < -3 || nb.img > 3);
 }
 
 int	mandelbrot(int max_iter, t_complex nb)

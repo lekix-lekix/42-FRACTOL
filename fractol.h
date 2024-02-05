@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:36:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/02 13:32:14 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/05 17:48:17 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ typedef struct s_data
 	int		bpp;
 	int		line_len;
 	int		endian;
+    int     width;
+    int     height;
 }			t_data;
 
 typedef struct s_complex
@@ -29,6 +31,13 @@ typedef struct s_complex
     double   img;
     int     img_square;
 }           t_complex;
+
+typedef struct s_colors
+{
+    int first;
+    int second;
+    int third;
+}           t_colors;
     
 int mandelbrot(int max_iter, t_complex nb);
 
