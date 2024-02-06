@@ -3,6 +3,7 @@
 #include "math.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <X11/keysym.h>
 
 int	**free_failed_alloc(int **tab, int i)
 {
@@ -59,8 +60,8 @@ t_complex	pixel_to_complex(int x, int y, int height, int width)
 
 	x_percent = (float)x / (float)width;
 	y_percent = (float)y / (float)height;
-	coordinates.real = -3 + (3 - (-3)) * x_percent;
-	coordinates.img = -3 + (3 - (-3)) * y_percent;
+	coordinates.real = -2 + (2 - (-2)) * x_percent;
+	coordinates.img = -2 + (2 - (-2)) * y_percent;
 	return (coordinates);
 }
 
@@ -71,7 +72,7 @@ int	**ft_alloc_tab(int width, int height)
 	int	**tab;
 
 	i = 0;
-	tab = malloc(sizeof(int *) * height);
+    tab = malloc(sizeof(int *) * height);
 	if (!tab)
 		return (NULL);
 	while (i < width)
@@ -84,7 +85,7 @@ int	**ft_alloc_tab(int width, int height)
 			tab[i][j] = 0;
 		i++;
 	}
-	tab[i] = NULL;
+	// tab[i] = NULL;
 	return (tab);
 }
 
@@ -95,13 +96,13 @@ float	**ft_alloc_tab_float(int width, int height)
 	float	**tab;
 
 	i = 0;
-	tab = malloc(sizeof(float *) * height);
+	tab = malloc(sizeof(float *) * height + 1);
 	if (!tab)
 		return (NULL);
 	while (i < width)
 	{
 		j = -1;
-		tab[i] = malloc(sizeof(float) * width);
+		tab[i] = malloc(sizeof(float) * width + 1);
 		while (++j < width)
 			tab[i][j] = 0;
 		i++;
@@ -124,7 +125,7 @@ void	color_gradient_px_put(t_data *img, int **px_iter_tab, int max_iter)
 		{
 			color = px_iter_tab[i][j] * 255 / (max_iter / 5);
 			if (px_iter_tab[i][j] == max_iter)
-				my_mlx_px_put(img, i, j, create_trgb(0, 1, 186, 239));
+				my_mlx_px_put(img, i, j, create_trgb(0, 0, 0, 0));
 			else if (px_iter_tab[i][j] < max_iter / 5)
 				my_mlx_px_put(img, i, j, create_trgb(0, color, 0, 0));
 			else if (px_iter_tab[i][j] >= max_iter / 5
@@ -195,26 +196,50 @@ t_data	*create_image(void *mlx, int width, int height)
 	return (img);
 }
 
+
+int    handle_input(int keysym, t_mlx_win *data)
+{
+    int mouse_x;
+    int mouse_y;
+    
+    mouse_x = 0;
+    mouse_y = 0;
+    printf("keypress = %d\n", keysym);
+    // printf("mlx %p window %p\n", data->mlx, data->window);
+    if (keysym == XK_Escape)
+    {
+        printf("%p mlx %p window\n", data->mlx, data->window);
+        mlx_destroy_window(data->mlx, data->window);
+        mlx_destroy_display(data->mlx);
+        exit(0);
+    }
+    mlx_mouse_get_pos(data->mlx, data->window, &mouse_x, &mouse_y);
+    printf("mousex %d mousey %d\n", mouse_x, mouse_y);
+    // free(data->mlx);
+    // free(data->window);
+    return (0);
+}
+
 int	main()
 {
-	void	*mlx;
-	void	*window;
+    t_mlx_win data;
 	t_data	*img;
-    t_colors colors;
 
-    mlx = mlx_init();
-	if (!mlx)
+    data.mlx = mlx_init();
+	if (!data.mlx)
 		return (-1);
-	window = mlx_new_window(mlx, 1200, 1200, "wesh la zone");
-	if (!window)
+	data.window = mlx_new_window(data.mlx, 1200, 1200, "wesh la zone");
+	if (!data.window)
 		return (-1);
 	img = NULL;
-	img = create_image(mlx, 1200, 1200);
+	img = create_image(data.mlx, 1200, 1200);
 	if (!img)
 		return (-1);
-	fractal_master_func(img, 50);
-	mlx_put_image_to_window(mlx, window, img->img, 0, 0);
-	free(img);
-	// mlx_destroy_window(mlx, windeow);
-	mlx_loop(mlx);
+	fractal_master_func(img, 200);
+	mlx_put_image_to_window(data.mlx, data.window, img->img, 0, 0);
+	mlx_destroy_image(data.mlx, img->img);
+    mlx_hook(data.window, 2, (1L<<0), handle_input, &data);
+	mlx_loop(data.mlx);
+    return (0);
 }
+
