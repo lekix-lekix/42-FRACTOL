@@ -64,10 +64,8 @@ t_complex	pixel_to_complex(int x, int y, int width, int height,
 	y_percent = (double)y / (double)height;
 	// printf("rmin x %g crmax x %f rmin y %f rmax y %f\n", range->min_x,
 		// range->max_x, range->min_y, range->max_y);
-	coordinates.real = range->min_x + (range->max_x - range->min_x) * x_percent
-		- range->trans_x;
-	coordinates.img = range->min_y + (range->max_y - range->min_y) * y_percent
-		- range->trans_y;
+	coordinates.real = range->min_x + (range->max_x - range->min_x) * x_percent - range->trans_x;
+	coordinates.img = range->min_y + (range->max_y - range->min_y) * y_percent - range->trans_y;
 	coordinates.img *= -1;
 	return (coordinates);
 }
@@ -170,7 +168,6 @@ int	**get_mandel_px_iter(t_data *img, t_range *range, int *color_tab,
 			px_iter_tab[i][j] = mandel_i;
 		}
 	}
-	printf("coucou\n");
 	return (px_iter_tab);
 }
 
@@ -214,86 +211,107 @@ int	init_fractal_img(t_mlx_win *data, t_range *range)
 	img = create_image(data->mlx, data->width, data->height);
 	if (!img)
 		return (-1);
-	fractal_master_func(img, range, 100);
+	fractal_master_func(img, range, range->max_iter);
 	mlx_put_image_to_window(data->mlx, data->window, img->img, 0, 0);
 	mlx_destroy_image(data->mlx, img->img);
 	return (0);
 }
 
-int	handle_input(int keysym, t_mlx_win *data)
+void    zoom_in(t_mlx_win *data)
+{
+    data->range->min_x *= 0.5;
+    data->range->max_x *= 0.5;
+    data->range->min_y *= 0.5;
+    data->range->max_y *= 0.5;
+}
+
+void    translate_zoom_in(t_mlx_win *data)
+{
+    int mouse_x;
+    int mouse_y;
+    t_complex mouse_pos;
+    
+    mlx_mouse_get_pos(data->mlx, data->window, &mouse_x, &mouse_y);
+    mouse_pos = pixel_to_complex(mouse_x, mouse_y, data->width, data->height, data->range);
+    data->range->trans_x -= fabs(data->range->trans_x) - fabs(mouse_pos.real);
+    data->range->trans_y -= fabs(data->range->trans_y) - fabs(mouse_pos.img);
+    zoom_in(data);
+    init_fractal_img(data, data->range);
+}
+
+void    zoom_out(t_mlx_win *data)
+{
+    data->range->min_x *= 2;
+    data->range->max_x *= 2;
+    data->range->min_y *= 2;
+    data->range->max_y *= 2;
+    init_fractal_img(data, data->range);
+}
+
+int	handle_mouse_input(int key, int x, int y, t_mlx_win *data)
 {
 	int			mouse_x;
 	int			mouse_y;
-	t_complex	mouse_pos;
+    t_complex mouse_pos;
 
+    (void) x;
+    (void) y;
 	mouse_x = 0;
 	mouse_y = 0;
-	printf("keypress = %d\n", keysym);
+	// printf("keypress = %d\n", key);
+    // printf("data %f\n", data->range->max_x);
+    // printf("coucou\n");
 	// printf("mlx %p window %p\n", data->mlx, data->window);
-	if (keysym == XK_Escape)
-	{
-		printf("%p mlx %p window\n", data->mlx, data->window);
-		mlx_destroy_window(data->mlx, data->window);
-		mlx_destroy_display(data->mlx);
-		exit(0);
-	}
-	if (keysym == 65513)
-	{
-		data->range->min_x *= 0.5;
-		data->range->max_x *= 0.5;
-		data->range->min_y *= 0.5;
-		data->range->max_y *= 0.5;
-		init_fractal_img(data, data->range);
-	}
-	if (keysym == 65535)
-	{
-		data->range->min_x /= 10;
-		data->range->max_x /= 10;
-		data->range->min_y /= 10;
-		data->range->max_y /= 10;
-		init_fractal_img(data, data->range);
-	}
-	if (keysym == 65362)
-	{
-		data->range->trans_y -= 0.1;
-		init_fractal_img(data, data->range);
-	}
-	if (keysym == 65364)
-	{
-		data->range->trans_y += 0.1;
-		init_fractal_img(data, data->range);
-	}
-	if (keysym == 65361)
-	{
-		data->range->trans_x += 0.1;
-		init_fractal_img(data, data->range);
-	}
-	if (keysym == 65363)
-	{
-		data->range->trans_x -= 0.1;
-		init_fractal_img(data, data->range);
-	}
+	if (key == WHEELUP)
+        translate_zoom_in(data);
+	if (key == WHEELDOWN)
+        zoom_out(data);
 	mlx_mouse_get_pos(data->mlx, data->window, &mouse_x, &mouse_y);
-	printf("mousex %d mousey %d\n", mouse_x, mouse_y);
-	mouse_pos = pixel_to_complex(mouse_x, mouse_y, data->width, data->height,
-			data->range);
-	printf("mouse reel %f, mouse img %f\n", mouse_pos.real, mouse_pos.img);
+    mouse_pos = pixel_to_complex(mouse_x, mouse_y, data->width, data->height, data->range);
+    // printf("range = xmin %f xmax %f ymin %f ymax %f\n", data->range->min_x, data->range->max_x, data->range->min_y, data->range->max_y);
+    // printf("tran x = %f, trans y = %f\n", data->range->trans_x, data->range->trans_y);
+    // printf("mouse x = %f mouse y = %f\n", mouse_pos.real, mouse_pos.img);
 	// free(data->mlx);
 	// free(data->window);c
 	return (0);
 }
 
+int handle_keyboard_input(int key, t_mlx_win *data)
+{
+    printf("key %d\n", key);
+    if (key == XK_Escape)
+	{
+		mlx_destroy_window(data->mlx, data->window);
+		mlx_destroy_display(data->mlx);
+		exit(0);
+	}
+    if (key == UP_ARROW)
+		data->range->trans_y += 0.5;
+	if (key == DOWN_ARROW)
+		data->range->trans_y -= 0.5;
+	if (key == LEFT_ARROW)
+		data->range->trans_x += 0.5;
+	if (key == RIGHT_ARROW)
+		data->range->trans_x -= 0.5;
+    if (key == 61)
+        data->range-> max_iter += 50;
+    if (key == 45)
+        data->range->max_iter -= 35;
+    init_fractal_img(data, data->range);
+    return (0);
+}
 int	main(void)
 {
 	t_mlx_win	data;
 	t_range		range;
 
-	range.min_x = -2;
-	range.min_y = -2;
-	range.max_x = 2;
-	range.max_y = 2;
-	data.width = 1200;
-	data.height = 1000;
+	range.min_x = -3;
+	range.max_x = 3;
+	range.min_y = -3;
+	range.max_y = 3;
+    range.max_iter = 100;
+	data.width = 1000;
+	data.height = 800;
 	data.mlx = mlx_init();
 	if (!data.mlx)
 		return (-1);
@@ -305,7 +323,9 @@ int	main(void)
 	data.range->trans_y = 0;
 	if (init_fractal_img(&data, &range) == -1)
 		return (-1); // need free
-	mlx_hook(data.window, 2, (1L << 0), handle_input, &data);
+    // mlx_key_hook(data.window, handle_input, &data);
+	mlx_hook(data.window, 2, (1L<<0), handle_keyboard_input, &data);
+	mlx_hook(data.window, 4, (1L<<2), handle_mouse_input, &data);
 	mlx_loop(data.mlx);
 	return (0);
 }

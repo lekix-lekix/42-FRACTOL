@@ -6,12 +6,18 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:36:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/07 18:42:01 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/08 17:07:35 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FRACTOL_H
 # define FRACTOL_H
+# define WHEELUP 4
+# define WHEELDOWN 5
+# define LEFT_ARROW 65361
+# define RIGHT_ARROW 65363
+# define UP_ARROW 65362
+# define DOWN_ARROW 65364
 # include <stdio.h>
 
 typedef struct s_range
@@ -22,6 +28,7 @@ typedef struct s_range
     double  max_y;
     double  trans_y;
     double  trans_x;
+    int     max_iter;
 }           t_range;
 
 typedef struct s_data
