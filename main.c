@@ -34,7 +34,6 @@ void	my_mlx_px_put(t_data *img, int x, int y, int color)
 {
 	char	*pixel;
 
-	// printf("px ")
 	pixel = img->addr + (y * img->line_len + x * (img->bpp / 8));
 	*(int *)pixel = color;
 }
@@ -44,13 +43,32 @@ int	assign_color(float percent)
 	int	color;
 
 	color = percent * 255;
-	// printf("color = %d\n", color);
 	return (color);
 }
 
 int	create_trgb(int t, int r, int g, int b)
 {
 	return (t << 24 | r << 16 | g << 8 | b);
+}
+
+int	get_t(int trgb)
+{
+	return ((trgb >> 24) & 0xFF);
+}
+
+int	get_r(int trgb)
+{
+	return ((trgb >> 16) & 0xFF);
+}
+
+int	get_g(int trgb)
+{
+	return ((trgb >> 8) & 0xFF);
+}
+
+int	get_b(int trgb)
+{
+	return (trgb & 0xFF);
 }
 
 t_complex	pixel_to_complex(int x, int y, int width, int height,
@@ -62,10 +80,10 @@ t_complex	pixel_to_complex(int x, int y, int width, int height,
 
 	x_percent = (double)x / (double)width;
 	y_percent = (double)y / (double)height;
-	// printf("rmin x %g crmax x %f rmin y %f rmax y %f\n", range->min_x,
-		// range->max_x, range->min_y, range->max_y);
-	coordinates.real = range->min_x + (range->max_x - range->min_x) * x_percent - range->trans_x;
-	coordinates.img = range->min_y + (range->max_y - range->min_y) * y_percent - range->trans_y;
+	coordinates.real = range->min_x + (range->max_x - range->min_x) * x_percent
+		- range->trans_x;
+	coordinates.img = range->min_y + (range->max_y - range->min_y) * y_percent
+		- range->trans_y;
 	coordinates.img *= -1;
 	return (coordinates);
 }
@@ -82,7 +100,6 @@ int	**ft_alloc_tab(int width, int height)
 		return (NULL);
 	while (i < height)
 	{
-		// printf("i = %d\n", i);
 		tab[i] = malloc(sizeof(int) * (width + 1));
 		if (!tab[i])
 			return (free_failed_alloc(tab, i));
@@ -117,30 +134,63 @@ float	**ft_alloc_tab_float(int width, int height)
 	return (tab);
 }
 
+int	*color_interpolation(int color_a, int color_b, int max_iter)
+{
+	int	i;
+	int	diff[3];
+	int	*color_tab;
+
+	diff[0] = get_r(color_a) - get_r(color_b) / max_iter;
+	diff[1] = get_g(color_a) - get_g(color_b) / max_iter;
+	diff[2] = get_g(color_a) - get_b(color_b) / max_iter;
+	i = 0;
+	color_tab = malloc(sizeof(int) * max_iter);
+	if (!color_tab)
+		return (NULL);
+	while (i < max_iter)
+	{
+		if (i == 0)
+			color_tab[i] = color_a;
+		else
+			color_tab[i] = create_trgb(0, get_r(color_tab[i - 1]) + diff[0],
+					get_g(color_tab[i - 1]) + diff[1], get_b(color_tab[i - 1])
+					+ diff[2]);
+		i++;
+	}
+	return (color_tab); // pas sur que ca marche bien
+}
+
 void	color_gradient_px_put(t_data *img, int **px_iter_tab, int max_iter)
 {
 	register int	i;
 	register int	j;
 	int				color;
+	int				*color_tab;
 
+	color_tab = color_interpolation(img->color_a, img->color_b, max_iter);
+	if (!color_tab)
+		return ; // will need to return something else
 	i = -1;
 	while (++i < img->height)
 	{
 		j = -1;
 		while (++j < img->width)
 		{
-			color = px_iter_tab[i][j] * 255 / (max_iter / 3);
-			if (px_iter_tab[i][j] == max_iter)
-				continue ;
-			else if (px_iter_tab[i][j] < max_iter / 5)
-				my_mlx_px_put(img, j, i, create_trgb(0, color, 0, 0));
-			else if (px_iter_tab[i][j] >= max_iter / 5
-				&& px_iter_tab[i][j] <= (max_iter / 5) * 2)
-				my_mlx_px_put(img, j, i, create_trgb(0, 255, color, 0));
-			else
-				my_mlx_px_put(img, j, i, create_trgb(0, 255, 255, color));
+			color = color_tab[px_iter_tab[i][j]];
+			my_mlx_px_put(img, j, i, color);
+			// color = px_iter_tab[i][j] * 255 / (max_iter / 3);
+			// if (px_iter_tab[i][j] == max_iter)
+			// 	continue ;
+			// else if (px_iter_tab[i][j] < max_iter / 5)
+			// 	my_mlx_px_put(img, j, i, create_trgb(0, color, 0, 0));
+			// else if (px_iter_tab[i][j] >= max_iter / 5
+			// 	&& px_iter_tab[i][j] <= (max_iter / 5) * 2)
+			// 	my_mlx_px_put(img, j, i, create_trgb(0, 255, color, 0));
+			// else
+			// 	my_mlx_px_put(img, j, i, create_trgb(0, 255, 255, color));
 		}
 	}
+	free(color_tab);
 }
 
 int	**get_mandel_px_iter(t_data *img, t_range *range, int *color_tab,
@@ -187,20 +237,22 @@ void	fractal_master_func(t_data *img, t_range *range, int max_iter)
 	free(color_tab);
 }
 
-t_data	*create_image(void *mlx, int width, int height)
+t_data	*create_image(t_mlx_win *data)
 {
 	t_data	*img;
 
 	img = malloc(sizeof(t_data));
 	if (!img)
 		return (NULL);
-	img->img = mlx_new_image(mlx, width, height);
+	img->img = mlx_new_image(data->mlx, data->width, data->height);
 	if (!(img->img))
 		return (NULL);
 	img->addr = mlx_get_data_addr(img->img, &img->bpp, &img->line_len,
 			&img->endian);
-	img->width = width;
-	img->height = height;
+	img->width = data->width;
+	img->height = data->height;
+    img->color_a = create_trgb(0, 255, 0, 0);
+    img->color_b = create_trgb(0, 255, 255, 0);
 	return (img);
 }
 
@@ -208,7 +260,7 @@ int	init_fractal_img(t_mlx_win *data, t_range *range)
 {
 	t_data	*img;
 
-	img = create_image(data->mlx, data->width, data->height);
+	img = create_image(data);
 	if (!img)
 		return (-1);
 	fractal_master_func(img, range, range->max_iter);
@@ -217,75 +269,68 @@ int	init_fractal_img(t_mlx_win *data, t_range *range)
 	return (0);
 }
 
-void    zoom_in(t_mlx_win *data)
+void	zoom_in(t_mlx_win *data)
 {
-    data->range->min_x *= 0.5;
-    data->range->max_x *= 0.5;
-    data->range->min_y *= 0.5;
-    data->range->max_y *= 0.5;
+	data->range->min_x *= 0.5;
+	data->range->max_x *= 0.5;
+	data->range->min_y *= 0.5;
+	data->range->max_y *= 0.5;
 }
 
-void    translate_zoom_in(t_mlx_win *data)
+void	translate_zoom_in(t_mlx_win *data)
 {
-    int mouse_x;
-    int mouse_y;
-    t_complex mouse_pos;
-    
-    mlx_mouse_get_pos(data->mlx, data->window, &mouse_x, &mouse_y);
-    mouse_pos = pixel_to_complex(mouse_x, mouse_y, data->width, data->height, data->range);
-    data->range->trans_x -= fabs(data->range->trans_x) - fabs(mouse_pos.real);
-    data->range->trans_y -= fabs(data->range->trans_y) - fabs(mouse_pos.img);
-    zoom_in(data);
-    init_fractal_img(data, data->range);
+	int			mouse_x;
+	int			mouse_y;
+	t_complex	mouse_pos;
+
+	mlx_mouse_get_pos(data->mlx, data->window, &mouse_x, &mouse_y);
+	mouse_pos = pixel_to_complex(mouse_x, mouse_y, data->width, data->height,
+			data->range);
+	data->range->trans_x -= fabs(data->range->trans_x) - fabs(mouse_pos.real);
+	data->range->trans_y -= fabs(data->range->trans_y) - fabs(mouse_pos.img);
+	zoom_in(data);
+	init_fractal_img(data, data->range);
 }
 
-void    zoom_out(t_mlx_win *data)
+void	zoom_out(t_mlx_win *data)
 {
-    data->range->min_x *= 2;
-    data->range->max_x *= 2;
-    data->range->min_y *= 2;
-    data->range->max_y *= 2;
-    init_fractal_img(data, data->range);
+	data->range->min_x *= 2;
+	data->range->max_x *= 2;
+	data->range->min_y *= 2;
+	data->range->max_y *= 2;
+	init_fractal_img(data, data->range);
 }
 
 int	handle_mouse_input(int key, int x, int y, t_mlx_win *data)
 {
 	int			mouse_x;
 	int			mouse_y;
-    t_complex mouse_pos;
+	t_complex	mouse_pos;
 
-    (void) x;
-    (void) y;
+	(void)x;
+	(void)y;
 	mouse_x = 0;
 	mouse_y = 0;
-	// printf("keypress = %d\n", key);
-    // printf("data %f\n", data->range->max_x);
-    // printf("coucou\n");
-	// printf("mlx %p window %p\n", data->mlx, data->window);
 	if (key == WHEELUP)
-        translate_zoom_in(data);
+		translate_zoom_in(data);
 	if (key == WHEELDOWN)
-        zoom_out(data);
+		zoom_out(data);
 	mlx_mouse_get_pos(data->mlx, data->window, &mouse_x, &mouse_y);
-    mouse_pos = pixel_to_complex(mouse_x, mouse_y, data->width, data->height, data->range);
-    // printf("range = xmin %f xmax %f ymin %f ymax %f\n", data->range->min_x, data->range->max_x, data->range->min_y, data->range->max_y);
-    // printf("tran x = %f, trans y = %f\n", data->range->trans_x, data->range->trans_y);
-    // printf("mouse x = %f mouse y = %f\n", mouse_pos.real, mouse_pos.img);
-	// free(data->mlx);
-	// free(data->window);c
+	mouse_pos = pixel_to_complex(mouse_x, mouse_y, data->width, data->height,
+			data->range);
 	return (0);
 }
 
-int handle_keyboard_input(int key, t_mlx_win *data)
+int	handle_keyboard_input(int key, t_mlx_win *data)
 {
-    printf("key %d\n", key);
-    if (key == XK_Escape)
+	printf("key %d\n", key);
+	if (key == XK_Escape)
 	{
 		mlx_destroy_window(data->mlx, data->window);
 		mlx_destroy_display(data->mlx);
 		exit(0);
 	}
-    if (key == UP_ARROW)
+	if (key == UP_ARROW)
 		data->range->trans_y += 0.5;
 	if (key == DOWN_ARROW)
 		data->range->trans_y -= 0.5;
@@ -293,29 +338,29 @@ int handle_keyboard_input(int key, t_mlx_win *data)
 		data->range->trans_x += 0.5;
 	if (key == RIGHT_ARROW)
 		data->range->trans_x -= 0.5;
-    if (key == 61)
-        data->range-> max_iter += 50;
-    if (key == 45)
-        data->range->max_iter -= 35;
-    init_fractal_img(data, data->range);
-    return (0);
+	if (key == 61)
+		data->range->max_iter += 50;
+	if (key == 45)
+		data->range->max_iter -= 35;
+	init_fractal_img(data, data->range);
+	return (0);
 }
 int	main(void)
 {
-	t_mlx_win	data;
-	t_range		range;
+	t_range	range;
+    t_mlx_win	data;
 
 	range.min_x = -3;
 	range.max_x = 3;
 	range.min_y = -3;
 	range.max_y = 3;
-    range.max_iter = 100;
+	range.max_iter = 100;
 	data.width = 1000;
 	data.height = 800;
 	data.mlx = mlx_init();
 	if (!data.mlx)
 		return (-1);
-	data.window = mlx_new_window(data.mlx, data.width, data.height, "fract-ol");
+	data.window = mlx_new_window(data.mlx, data.width, data.height,"fract-ol");
 	if (!data.window)
 		return (-1);
 	data.range = &range;
@@ -323,7 +368,7 @@ int	main(void)
 	data.range->trans_y = 0;
 	if (init_fractal_img(&data, &range) == -1)
 		return (-1); // need free
-    // mlx_key_hook(data.window, handle_input, &data);
+	// mlx_key_hook(data.window, handle_input, &data);
 	mlx_hook(data.window, 2, (1L<<0), handle_keyboard_input, &data);
 	mlx_hook(data.window, 4, (1L<<2), handle_mouse_input, &data);
 	mlx_loop(data.mlx);

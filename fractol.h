@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:36:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/08 17:07:35 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/08 18:43:45 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ typedef struct s_data
 	int		endian;
     int     width;
     int     height;
+    int     color_a;
+    int     color_b;
 }			t_data;
 
 typedef struct s_mlx_win
