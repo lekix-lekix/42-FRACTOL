@@ -16,7 +16,7 @@ int	**free_failed_alloc(int **tab, int i)
 	return (NULL);
 }
 
-int	*ft_free_tab(int **tab, int height)
+int	*ft_free_tab(double **tab, int height)
 {
 	int	i;
 
@@ -112,20 +112,20 @@ int	**ft_alloc_tab(int width, int height)
 	return (tab);
 }
 
-float	**ft_alloc_tab_float(int width, int height)
+double	**ft_alloc_tab_double(int width, int height)
 {
-	register int	i;
-	register int	j;
-	float			**tab;
+	int	i;
+	int	j;
+	double			**tab;
 
 	i = 0;
-	tab = malloc(sizeof(float *) * height + 1);
+	tab = malloc(sizeof(double *) * height + 1);
 	if (!tab)
 		return (NULL);
 	while (i < height)
 	{
 		j = -1;
-		tab[i] = malloc(sizeof(float) * width + 1);
+		tab[i] = malloc(sizeof(double) * width + 1);
 		while (++j < width)
 			tab[i][j] = 0;
 		i++;
@@ -134,50 +134,95 @@ float	**ft_alloc_tab_float(int width, int height)
 	return (tab);
 }
 
+int	add_colors(int color_a, int color_b)
+{
+	int	color;
+
+	color = create_trgb(get_t(color_a) + get_t(color_b), get_r(color_a)
+			+ get_r(color_b), get_g(color_a) + get_g(color_b), get_b(color_a)
+			+ get_b(color_b));
+	return (color);
+}
+
+int calc_diff(int a, int b)
+{
+    if (a > b)
+        return (a - b);
+    else
+        return (b - a);
+}
+
+int	diff_colors(int color_a, int color_b)
+{
+	int	color;
+    int diff_t;
+    int diff_r;
+    int diff_g;
+    int diff_b;
+
+    diff_t = calc_diff(get_t(color_a), get_t(color_b));
+    diff_r = calc_diff(get_r(color_a), get_r(color_b));
+    diff_g = calc_diff(get_g(color_a), get_g(color_b));
+    diff_b = calc_diff(get_b(color_a), get_b(color_b));
+    
+	color = create_trgb(diff_t, diff_r, diff_g, diff_b);
+	return (color);
+}
+
+int	color_multiply(int color, float mult)
+{
+	int	final_color;
+
+	final_color = create_trgb(get_t(color) * mult, get_r(color) * mult, get_g(color) * mult, get_b(color) * mult);
+	return (final_color);
+}
+
 int	*color_interpolation(int color_a, int color_b, int max_iter)
 {
 	int	i;
-	int	diff[3];
+    int diff;
+    float mult;
 	int	*color_tab;
 
-	diff[0] = get_r(color_a) - get_r(color_b) / max_iter;
-	diff[1] = get_g(color_a) - get_g(color_b) / max_iter;
-	diff[2] = get_g(color_a) - get_b(color_b) / max_iter;
 	i = 0;
 	color_tab = malloc(sizeof(int) * max_iter);
 	if (!color_tab)
 		return (NULL);
-	while (i < max_iter)
+    diff = diff_colors(color_a, color_b);
+	max_iter -= 1;
+	while (i <= max_iter)
 	{
-		if (i == 0)
-			color_tab[i] = color_a;
-		else
-			color_tab[i] = create_trgb(0, get_r(color_tab[i - 1]) + diff[0],
-					get_g(color_tab[i - 1]) + diff[1], get_b(color_tab[i - 1])
-					+ diff[2]);
-		i++;
+        mult = (float)i / (float) max_iter;
+		color_tab[i] = add_colors(color_a, color_multiply(diff, mult));
+        i++;
 	}
 	return (color_tab); // pas sur que ca marche bien
 }
 
-void	color_gradient_px_put(t_data *img, int **px_iter_tab, int max_iter)
-{
-	register int	i;
-	register int	j;
-	int				color;
-	int				*color_tab;
+// void	color_gradient_px_put(t_data *img, double **px_iter_tab, int max_iter)
+// {
+// 	register int	i;
+// 	register int	j;
+// 	int				color;
+// 	int				*color_tab;
 
-	color_tab = color_interpolation(img->color_a, img->color_b, max_iter);
-	if (!color_tab)
-		return ; // will need to return something else
-	i = -1;
-	while (++i < img->height)
-	{
-		j = -1;
-		while (++j < img->width)
-		{
-			color = color_tab[px_iter_tab[i][j]];
-			my_mlx_px_put(img, j, i, color);
+// 	color_tab = color_interpolation(img->color_a, img->color_b, max_iter);
+//     i = 0;
+//     while (i < max_iter)
+//     {
+//         printf("color tab %d = %d,%d,%d,%d\n", i, get_t(color_tab[i]), get_r(color_tab[i]), get_g(color_tab[i]), get_b(color_tab[i]));
+//         i++;
+//     }
+// 	if (!color_tab)
+// 		return ; // will need to return something else
+// 	i = -1;
+// 	while (++i < img->height)
+// 	{
+// 		j = -1;
+// 		while (++j < img->width)
+// 		{
+// 			color = color_tab[px_iter_tab[i][j]];
+// 			my_mlx_px_put(img, j, i, color);
 			// color = px_iter_tab[i][j] * 255 / (max_iter / 3);
 			// if (px_iter_tab[i][j] == max_iter)
 			// 	continue ;
@@ -188,23 +233,59 @@ void	color_gradient_px_put(t_data *img, int **px_iter_tab, int max_iter)
 			// 	my_mlx_px_put(img, j, i, create_trgb(0, 255, color, 0));
 			// else
 			// 	my_mlx_px_put(img, j, i, create_trgb(0, 255, 255, color));
-		}
-	}
-	free(color_tab);
+// 		}
+// 	}
+// 	free(color_tab);
+// }
+
+int interpolate_color(int color_a, int color_b, double t)
+{
+    int r;
+    int g;
+    int b;
+
+    r = get_r(color_a) * (1 - t) + get_r(color_b) * t;
+    g = get_g(color_a) * (1 - t) + get_g(color_b) * t;
+    b = get_b(color_a) * (1 - t) + get_b(color_b) * t;
+    // printf("r g b %d %d %d\n", r, g, b);
+    return (create_trgb(0, r, g, b));
 }
 
-int	**get_mandel_px_iter(t_data *img, t_range *range, int *color_tab,
-		int max_iter)
+void	color_gradient_px_put(t_data *img, double **px_iter_tab)
 {
-	register int	i;
-	register int	j;
+	int	i;
+	int	j;
+	int	color;
+
+	i = -1;
+	while (++i < img->height)
+	{
+		j = -1;
+		while (++j < img->width)
+		{
+            if (px_iter_tab[i][j] == 1.0)
+                color = create_trgb(0, 0, 0, 0);
+            else if (px_iter_tab[i][j] > 0.5 && px_iter_tab[i][j] < 0.7)
+                color = interpolate_color(img->color_a, img->color_b, px_iter_tab[i][j]);
+            else
+                color = interpolate_color(img->color_b, img->color_c, px_iter_tab[i][j]);
+            
+            my_mlx_px_put(img, j, i, color);
+		}
+	}
+}
+
+double	**get_mandel_px_iter(t_data *img, t_range *range, int max_iter)
+{
+	int	i;
+	int	j;
 	int				mandel_i;
-	int				**px_iter_tab;
+	double			**px_iter_tab;
 	t_complex		px;
 
 	i = -1;
 	printf("width %d height %d\n", img->width, img->height);
-	px_iter_tab = ft_alloc_tab(img->width, img->height);
+	px_iter_tab = ft_alloc_tab_double(img->width, img->height);
 	if (!px_iter_tab)
 		return (NULL);
 	while (++i < img->height)
@@ -214,27 +295,23 @@ int	**get_mandel_px_iter(t_data *img, t_range *range, int *color_tab,
 		{
 			px = pixel_to_complex(j, i, img->width, img->height, range);
 			mandel_i = mandelbrot(max_iter, px);
-			color_tab[mandel_i - 1]++;
-			px_iter_tab[i][j] = mandel_i;
+			px_iter_tab[i][j] = log(mandel_i) / log(max_iter);
+            // printf("pxiter %f\n", px_iter_tab[i][j]);
 		}
-	}
+    }
 	return (px_iter_tab);
 }
 
 void	fractal_master_func(t_data *img, t_range *range, int max_iter)
 {
-	int	**px_iter_tab;
-	int	*color_tab;
+	double	**px_iter_tab;
 
-	color_tab = malloc(sizeof(int) * max_iter);
-	if (!color_tab)
-		return ;
-	px_iter_tab = get_mandel_px_iter(img, range, color_tab, max_iter);
+	px_iter_tab = get_mandel_px_iter(img, range, max_iter);
 	if (!px_iter_tab)
 		return ; // need to free color_tab
-	color_gradient_px_put(img, px_iter_tab, max_iter);
-	ft_free_tab(px_iter_tab, img->height);
-	free(color_tab);
+	color_gradient_px_put(img, px_iter_tab);
+    ft_free_tab(px_iter_tab, img->height);
+	// free(color_tab);
 }
 
 t_data	*create_image(t_mlx_win *data)
@@ -251,8 +328,10 @@ t_data	*create_image(t_mlx_win *data)
 			&img->endian);
 	img->width = data->width;
 	img->height = data->height;
-    img->color_a = create_trgb(0, 255, 0, 0);
-    img->color_b = create_trgb(0, 255, 255, 0);
+	img->color_a = create_trgb(0, 51, 0, 0);
+	img->color_b = create_trgb(0, 255, 204, 204);
+    img->color_c = create_trgb(0, 255, 255, 0);
+
 	return (img);
 }
 
@@ -347,20 +426,20 @@ int	handle_keyboard_input(int key, t_mlx_win *data)
 }
 int	main(void)
 {
-	t_range	range;
-    t_mlx_win	data;
+	t_range		range;
+	t_mlx_win	data;
 
 	range.min_x = -3;
 	range.max_x = 3;
 	range.min_y = -3;
 	range.max_y = 3;
-	range.max_iter = 100;
+	range.max_iter = 50;
 	data.width = 1000;
 	data.height = 800;
 	data.mlx = mlx_init();
 	if (!data.mlx)
 		return (-1);
-	data.window = mlx_new_window(data.mlx, data.width, data.height,"fract-ol");
+	data.window = mlx_new_window(data.mlx, data.width, data.height, "fract-ol");
 	if (!data.window)
 		return (-1);
 	data.range = &range;
@@ -369,8 +448,8 @@ int	main(void)
 	if (init_fractal_img(&data, &range) == -1)
 		return (-1); // need free
 	// mlx_key_hook(data.window, handle_input, &data);
-	mlx_hook(data.window, 2, (1L<<0), handle_keyboard_input, &data);
-	mlx_hook(data.window, 4, (1L<<2), handle_mouse_input, &data);
+	mlx_hook(data.window, 2, (1L << 0), handle_keyboard_input, &data);
+	mlx_hook(data.window, 4, (1L << 2), handle_mouse_input, &data);
 	mlx_loop(data.mlx);
 	return (0);
 }

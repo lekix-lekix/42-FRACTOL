@@ -22,3 +22,15 @@
 	// 	}
 	// 	i++;
 	// }
+     
+
+     			// color = px_iter_tab[i][j] * 255 / (max_iter / 3);
+			// if (px_iter_tab[i][j] == max_iter)
+			// 	continue ;
+			// else if (px_iter_tab[i][j] < max_iter / 5)
+			// 	my_mlx_px_put(img, j, i, create_trgb(0, color, 0, 0));
+			// else if (px_iter_tab[i][j] >= max_iter / 5
+			// 	&& px_iter_tab[i][j] <= (max_iter / 5) * 2)
+			// 	my_mlx_px_put(img, j, i, create_trgb(0, 255, color, 0));
+			// else
+			// 	my_mlx_px_put(img, j, i, create_trgb(0, 255, 255, color));
