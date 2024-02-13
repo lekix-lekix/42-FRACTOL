@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:36:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/12 17:36:42 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/13 16:37:39 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef struct s_colors
 }				t_colors;
 
 int				mandelbrot(int max_iter, t_complex nb);
+int             mandelbrot2(t_complex px, int max_iter);
 int				julia(int max_iter, t_complex nb, t_complex c_plot);
 
 #endif

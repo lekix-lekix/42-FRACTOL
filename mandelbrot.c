@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 18:07:02 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/12 18:43:10 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/13 13:50:56 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,3 @@ int julia(int max_iter, t_complex px, t_complex c_plot)
     }
     return (i);
 }
-// int	main(void)
-// {
-// 	t_complex nb;
-
-// 	nb.real = 0;
-// 	nb.img = 0.2;
-// 	int i = mandelbrot(20, nb);
-// 	printf("i = %d\n", i);
-// }

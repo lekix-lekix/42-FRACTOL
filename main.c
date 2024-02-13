@@ -71,6 +71,46 @@ int	get_b(int trgb)
 	return (trgb & 0xFF);
 }
 
+int	min(double **data, int height, int width)
+{
+	int		i;
+	int		j;
+	double	min;
+
+	i = -1;
+	min = data[0][0];
+	while (++i < height)
+	{
+		j = -1;
+		while (++j < width)
+		{
+			if (data[i][j] < min)
+				min = data[i][j];
+		}
+	}
+	return (min);
+}
+
+int	max(double **data, int height, int width)
+{
+	int		i;
+	int		j;
+	double	max;
+
+	i = -1;
+	max = data[0][0];
+	while (++i < height)
+	{
+		j = -1;
+		while (++j < width)
+		{
+			if (data[i][j] > max)
+				max = data[i][j];
+		}
+	}
+	return (max);
+}
+
 t_complex	pixel_to_complex(int x, int y, int width, int height,
 		t_range *range)
 {
@@ -239,6 +279,30 @@ int	*color_interpolation(int color_a, int color_b, int max_iter)
 // 	free(color_tab);
 // }
 
+double	normalize_value(double value, double min, double max)
+{
+	return ((value - min) / (max - min));
+}
+
+void	normalize_data(double **data, int height, int width)
+{
+	double	min_val;
+	double	max_val;
+	int		i;
+	int		j;
+
+	min_val = min(data, height, width);
+	max_val = max(data, height, width);
+	// printf("min = %f, max = %f\n", min_val, max_val);
+	i = -1;
+	while (++i < height)
+	{
+		j = -1;
+		while (++j < width)
+			data[i][j] = normalize_value(data[i][j], min_val, max_val);
+	}
+}
+
 int	interpolate_color(int color_a, int color_b, double t)
 {
 	int	r;
@@ -264,81 +328,24 @@ void	color_gradient_px_put(t_data *img, double **px_iter_tab, int *colors)
 		j = -1;
 		while (++j < img->width)
 		{
-			if (px_iter_tab[i][j] >= 0 && px_iter_tab[i][j] <= 0.16)
+			if (px_iter_tab[i][j] == 1)
+				color = create_trgb(0, 0, 0, 0);
+			else if (px_iter_tab[i][j] >= 0 && px_iter_tab[i][j] <= 0.16)
 				color = interpolate_color(colors[0], colors[1],
-						px_iter_tab[i][j]);
+						normalize_value(px_iter_tab[i][j], 0, 0.16));
 			else if (px_iter_tab[i][j] > 0.16 && px_iter_tab[i][j] <= 0.42)
 				color = interpolate_color(colors[1], colors[2],
-						px_iter_tab[i][j]);
+						normalize_value(px_iter_tab[i][j], 0.16, 0.42));
 			else if (px_iter_tab[i][j] > 0.42 && px_iter_tab[i][j] <= 0.6425)
 				color = interpolate_color(colors[2], colors[3],
-						px_iter_tab[i][j]);
+						normalize_value(px_iter_tab[i][j], 0.42, 0.6425));
 			else if (px_iter_tab[i][j] > 0.6425 && px_iter_tab[i][j] <= 0.8575)
 				color = interpolate_color(colors[3], colors[4],
-						px_iter_tab[i][j]);
+						normalize_value(px_iter_tab[i][j], 0.6425, 0.8575));
 			else
 				continue ;
 			my_mlx_px_put(img, j, i, color);
 		}
-	}
-}
-
-int	min(double **data, int height, int width)
-{
-	int		i;
-	int		j;
-	double	min;
-
-	i = -1;
-	min = data[0][0];
-	while (++i < height)
-	{
-		j = -1;
-		while (++j < width)
-		{
-			if (data[i][j] < min)
-				min = data[i][j];
-		}
-	}
-	return (min);
-}
-
-int	max(double **data, int height, int width)
-{
-	int		i;
-	int		j;
-	double	max;
-
-	i = -1;
-	max = data[0][0];
-	while (++i < height)
-	{
-		j = -1;
-		while (++j < width)
-		{
-			if (data[i][j] > max)
-				max = data[i][j];
-		}
-	}
-	return (max);
-}
-
-void	normalize_data(double **data, int height, int width)
-{
-	double	min_val;
-	double	max_val;
-	int		i;
-	int		j;
-
-	min_val = min(data, height, width);
-	max_val = max(data, height, width);
-	// printf("min = %f, max = %f\n", min_val, max_val);
-	i = -1;
-	while (++i < height)
-	{
-		j = -1;
-		while (++j < width)
-			data[i][j] = (data[i][j] - min_val) / (max_val - min_val);
 	}
 }
 
@@ -349,11 +356,11 @@ int	*create_color_segments(void)
 	color_segments = malloc(sizeof(int) * 5);
 	if (!color_segments)
 		return (NULL);
-	color_segments[0] = create_trgb(0, 0, 7, 100);
-	color_segments[1] = create_trgb(0, 32, 107, 203);
-	color_segments[2] = create_trgb(0, 237, 255, 255);
-	color_segments[3] = create_trgb(0, 255, 170, 0);
-	color_segments[4] = create_trgb(0, 0, 2, 0);
+	color_segments[0] = create_trgb(0, 0, 0, 150);
+	color_segments[1] = create_trgb(0, 255, 255, 0);
+	color_segments[2] = create_trgb(0, 0, 255, 0);
+	color_segments[3] = create_trgb(0, 0, 255, 255);
+	color_segments[4] = create_trgb(0, 0, 0, 255);
 	return (color_segments);
 }
 
@@ -376,7 +383,7 @@ double	**get_mandel_px_iter(t_data *img, t_range *range, int max_iter)
 		while (++j < img->width)
 		{
 			px = pixel_to_complex(j, i, img->width, img->height, range);
-			mandel_i = julia(max_iter, px, range->c_plot);
+			mandel_i = mandelbrot(max_iter, px);
 			px_iter_tab[i][j] = mandel_i;
 		}
 	}
@@ -504,13 +511,15 @@ int	handle_keyboard_input(int key, t_mlx_win *data)
 	if (key == 45)
 		data->range->max_iter -= 35;
 	if (key == 105)
-		data->range->c_plot.img += 0.1;	
-    if (key == 111)
-		data->range->c_plot.img -= 0.1;	
-    if (key == 101)
-		data->range->c_plot.real += 0.1;	
-    if (key == 114)
+		data->range->c_plot.img += 0.1;
+	if (key == 111)
+		data->range->c_plot.img -= 0.1;
+	if (key == 101)
+		data->range->c_plot.real += 0.1;
+	if (key == 114)
 		data->range->c_plot.real -= 0.1;
+	if (key == 48)
+		data->range->max_iter = 200;
 	init_fractal_img(data, data->range);
 	return (0);
 }
@@ -523,9 +532,10 @@ int	main(void)
 	range.max_x = 2;
 	range.min_y = -2;
 	range.max_y = 2;
-	range.max_iter = 50;
-	range.c_plot.real = 0.37;
-	range.c_plot.img = 0.1;
+	range.max_iter = 200;
+	range.c_plot.real = 0;
+	range.c_plot.img = 0;
+    range.trans_x = -0.5;
 	data.width = 1000;
 	data.height = 800;
 	data.mlx = mlx_init();
@@ -545,3 +555,6 @@ int	main(void)
 	mlx_loop(data.mlx);
 	return (0);
 }
+
+// cc -Wall -Wextra -Werror -I ./minilibx-linux main.c mandelbrot.c
+	// -L ./minilibx-linux/ -lmlx -lXext -lX11 -lm -g3 -O3
