@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 18:07:02 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/13 13:50:56 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/14 16:05:52 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	mandelbrot(int max_iter, t_complex nb)
     i = 0;
     result.real = 0;
     result.img = 0;
-    while (i < max_iter && fabs(result.real) < 5000 && fabs(result.img) < 5000)
+    while (i < max_iter && fabs(result.real) < 3 && fabs(result.img) < 3)
     {
         result = calc_mandelbrot(result, nb);
         // printf("res = %f | %f\n", result.real, result.img);

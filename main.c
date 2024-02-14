@@ -343,12 +343,34 @@ void	color_gradient_px_put(t_data *img, double **px_iter_tab, int *colors)
 				color = interpolate_color(colors[3], colors[4],
 						normalize_value(px_iter_tab[i][j], 0.6425, 0.8575));
 			else
-				continue ;
+				color = interpolate_color(colors[3], colors[4],
+						normalize_value(px_iter_tab[i][j], 0.8573, 1));
 			my_mlx_px_put(img, j, i, color);
 		}
 	}
 }
 
+int *pick_color(int *colors_segments, int index)
+{
+    int i;
+    int j;
+    int *colors;
+
+    colors = malloc(sizeof(int) * 5);
+    if (!colors)
+        return (NULL);
+    i = 0;
+    j = index;
+    while (i < 5)
+    {
+        if (j == 5)
+            j = 0;
+        colors[i] = colors_segments[j];
+        i++;
+        j++;
+    }
+    return (colors);
+}
 int	*create_color_segments(void)
 {
 	int	*color_segments;
@@ -356,7 +378,7 @@ int	*create_color_segments(void)
 	color_segments = malloc(sizeof(int) * 5);
 	if (!color_segments)
 		return (NULL);
-	color_segments[0] = create_trgb(0, 0, 0, 150);
+	color_segments[0] = create_trgb(0, 255, 0, 0);
 	color_segments[1] = create_trgb(0, 255, 255, 0);
 	color_segments[2] = create_trgb(0, 0, 255, 0);
 	color_segments[3] = create_trgb(0, 0, 255, 255);
