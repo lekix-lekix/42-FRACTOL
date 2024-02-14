@@ -316,23 +316,6 @@ int	interpolate_color(int color_a, int color_b, double t)
 	return (create_trgb(0, r, g, b));
 }
 
-int	cyclic_color(double n, double min, double max, int *colors)
-{
-	double	value;
-
-	value = normalize_value(n, min, max);
-	if (value >= 0 && value <= 0.2)
-		return (interpolate_color(colors[0], colors[1], normalize_value(value, 0, 0.16)));
-	else if (value > 0.2 && value <= 0.4)
-		return (interpolate_color(colors[1], colors[2], normalize_value(value, 0.2, 0.4)));
-	else if (value > 0.4 && value <= 0.6)
-		return (interpolate_color(colors[2], colors[3], normalize_value(value, 0.4, 0.6)));
-	else if (value > 0.6 && value <= 0.8)
-		return (interpolate_color(colors[3], colors[4], normalize_value(value, 0.6, 0.8)));
-	else
-		return (interpolate_color(colors[4], colors[0], normalize_value(value, 0.8, 1)));
-}
-
 void	color_gradient_px_put(t_data *img, double **px_iter_tab, int *colors)
 {
 	int	i;
@@ -345,18 +328,22 @@ void	color_gradient_px_put(t_data *img, double **px_iter_tab, int *colors)
 		j = -1;
 		while (++j < img->width)
 		{
-            if (px_iter_tab[i][j] == 1)
-                color = create_trgb(0, 0, 0, 0);
-			else if (px_iter_tab[i][j] <= 0.16)
-                color = cyclic_color(px_iter_tab[i][j], 0, 0.16, colors);
+			if (px_iter_tab[i][j] == 1)
+				color = create_trgb(0, 0, 0, 0);
+			else if (px_iter_tab[i][j] >= 0 && px_iter_tab[i][j] <= 0.16)
+				color = interpolate_color(colors[0], colors[1],
+						normalize_value(px_iter_tab[i][j], 0, 0.16));
 			else if (px_iter_tab[i][j] > 0.16 && px_iter_tab[i][j] <= 0.42)
-                color = cyclic_color(px_iter_tab[i][j], 0.16, 0.42, colors);
+				color = interpolate_color(colors[1], colors[2],
+						normalize_value(px_iter_tab[i][j], 0.16, 0.42));
 			else if (px_iter_tab[i][j] > 0.42 && px_iter_tab[i][j] <= 0.6425)
-                color = cyclic_color(px_iter_tab[i][j], 0.42, 0.6425, colors);
+				color = interpolate_color(colors[2], colors[3],
+						normalize_value(px_iter_tab[i][j], 0.42, 0.6425));
 			else if (px_iter_tab[i][j] > 0.6425 && px_iter_tab[i][j] <= 0.8575)
-                color = cyclic_color(px_iter_tab[i][j], 0.6425, 0.8575, colors);
+				color = interpolate_color(colors[3], colors[4],
+						normalize_value(px_iter_tab[i][j], 0.6425, 0.8575));
 			else
-                color = cyclic_color(px_iter_tab[i][j], 0.8575, 1, colors);
+				continue ;
 			my_mlx_px_put(img, j, i, color);
 		}
 	}
@@ -369,7 +356,7 @@ int	*create_color_segments(void)
 	color_segments = malloc(sizeof(int) * 5);
 	if (!color_segments)
 		return (NULL);
-	color_segments[0] = create_trgb(0, 255, 0, 0);
+	color_segments[0] = create_trgb(0, 0, 0, 150);
 	color_segments[1] = create_trgb(0, 255, 255, 0);
 	color_segments[2] = create_trgb(0, 0, 255, 0);
 	color_segments[3] = create_trgb(0, 0, 255, 255);
@@ -396,7 +383,7 @@ double	**get_mandel_px_iter(t_data *img, t_range *range, int max_iter)
 		while (++j < img->width)
 		{
 			px = pixel_to_complex(j, i, img->width, img->height, range);
-			mandel_i = julia(max_iter, px, range->c_plot);
+			mandel_i = mandelbrot(max_iter, px);
 			px_iter_tab[i][j] = mandel_i;
 		}
 	}
@@ -417,7 +404,7 @@ void	fractal_master_func(t_data *img, t_range *range, int max_iter)
 		return ; // need to free color_tab
 	color_gradient_px_put(img, px_iter_tab, colors);
 	ft_free_tab(px_iter_tab, img->height);
-	free(colors);
+	// free(color_tab);
 }
 
 t_data	*create_image(t_mlx_win *data)
@@ -511,26 +498,26 @@ int	handle_keyboard_input(int key, t_mlx_win *data)
 		mlx_destroy_display(data->mlx);
 		exit(0);
 	}
-	if (key == XK_Up)
+	if (key == UP_ARROW)
 		data->range->trans_y += 0.5;
-	if (key == XK_Down)
+	if (key == DOWN_ARROW)
 		data->range->trans_y -= 0.5;
-	if (key == XK_Left)
+	if (key == LEFT_ARROW)
 		data->range->trans_x += 0.5;
-	if (key == XK_Right)
+	if (key == RIGHT_ARROW)
 		data->range->trans_x -= 0.5;
-	if (key == PLUS)
-		data->range->max_iter += 35;
-	if (key == MINUS)
+	if (key == 61)
+		data->range->max_iter += 50;
+	if (key == 45)
 		data->range->max_iter -= 35;
 	if (key == 105)
-		data->range->c_plot.img += 0.01;
+		data->range->c_plot.img += 0.1;
 	if (key == 111)
-		data->range->c_plot.img -= 0.01;
+		data->range->c_plot.img -= 0.1;
 	if (key == 101)
-		data->range->c_plot.real += 0.005;
+		data->range->c_plot.real += 0.1;
 	if (key == 114)
-		data->range->c_plot.real -= 0.005;
+		data->range->c_plot.real -= 0.1;
 	if (key == 48)
 		data->range->max_iter = 200;
 	init_fractal_img(data, data->range);
@@ -541,14 +528,14 @@ int	main(void)
 	t_range		range;
 	t_mlx_win	data;
 
-	range.min_x = -3;
-	range.max_x = 3;
-	range.min_y = -3;
-	range.max_y = 3;
-	range.max_iter = 1000;
-	range.c_plot.real = 0.15;
-	range.c_plot.img = -1.2;
-	range.trans_x = -0.5;
+	range.min_x = -2;
+	range.max_x = 2;
+	range.min_y = -2;
+	range.max_y = 2;
+	range.max_iter = 200;
+	range.c_plot.real = 0;
+	range.c_plot.img = 0;
+    range.trans_x = -0.5;
 	data.width = 1000;
 	data.height = 800;
 	data.mlx = mlx_init();
@@ -558,7 +545,7 @@ int	main(void)
 	if (!data.window)
 		return (-1);
 	data.range = &range;
-	data.range->trans_x = 0.5;
+	data.range->trans_x = 0;
 	data.range->trans_y = 0;
 	if (init_fractal_img(&data, &range) == -1)
 		return (-1); // need free
@@ -570,4 +557,4 @@ int	main(void)
 }
 
 // cc -Wall -Wextra -Werror -I ./minilibx-linux main.c mandelbrot.c
-// -L ./minilibx-linux/ -lmlx -lXext -lX11 -lm -g3 -O3
+	// -L ./minilibx-linux/ -lmlx -lXext -lX11 -lm -g3 -O3

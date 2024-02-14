@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:36:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/14 14:44:09 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/13 16:37:39 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 # define FRACTOL_H
 # define WHEELUP 4
 # define WHEELDOWN 5
+# define LEFT_ARROW 65361
+# define RIGHT_ARROW 65363
+# define UP_ARROW 65362
 # define DOWN_ARROW 65364
-# define PLUS 61
-# define MINUS 45
-
 # include <stdio.h>
 
 typedef struct s_complex

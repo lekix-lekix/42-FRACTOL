@@ -6,18 +6,13 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 18:07:02 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/14 15:21:07 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/13 13:50:56 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./fractol.h"
 #include <math.h>
 #include <stdio.h>
-
-double square(double nb)
-{
-    return (nb * nb);
-}
 
 t_complex	binomial_squares(t_complex nb)
 { 
@@ -45,14 +40,13 @@ t_complex	calc_mandelbrot(t_complex mandel, t_complex nb)
     return (result);
 }
 
-// int will_escape(t_complex px)
-// {
-//     t_colors result;
 
-//     result.real = square
+// int has_escaped(t_complex nb)
+// {
+//     return (nb.real < -2 || nb.real > 2 || nb.img < -2 || nb.img > 2);
 // }
 
-int	mandelbrot(int max_iter, t_complex px)
+int	mandelbrot(int max_iter, t_complex nb)
 {
 	int			i;
 	t_complex	result;
@@ -60,9 +54,9 @@ int	mandelbrot(int max_iter, t_complex px)
     i = 0;
     result.real = 0;
     result.img = 0;
-    while (i < max_iter && !will_escape(px))
+    while (i < max_iter && fabs(result.real) < 5000 && fabs(result.img) < 5000)
     {
-        result = calc_mandelbrot(result, px);
+        result = calc_mandelbrot(result, nb);
         // printf("res = %f | %f\n", result.real, result.img);
         i++;
     }
