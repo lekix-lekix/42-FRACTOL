@@ -279,7 +279,41 @@ int	interpolate_color(int color_a, int color_b, double t)
 	return (create_trgb(0, r, g, b));
 }
 
-void	color_gradient_px_put(t_data *img, double **px_iter_tab, int *colors)
+// void	color_gradient_px_put(t_data *img, double **px_iter_tab, int *colors)
+// {
+// 	int	i;
+// 	int	j;
+// 	int	color;
+
+// 	i = -1;
+// 	while (++i < img->height)
+// 	{
+// 		j = -1;
+// 		while (++j < img->width)
+// 		{
+// 			if (px_iter_tab[i][j] == 1)
+// 				color = create_trgb(0, 0, 0, 0);
+// 			else if (px_iter_tab[i][j] >= 0 && px_iter_tab[i][j] <= 0.16)
+// 				color = interpolate_color(colors[0], colors[1],
+// 						normalize_value(px_iter_tab[i][j], 0, 0.16));
+// 			else if (px_iter_tab[i][j] > 0.16 && px_iter_tab[i][j] <= 0.42)
+// 				color = interpolate_color(colors[1], colors[2],
+// 						normalize_value(px_iter_tab[i][j], 0.16, 0.42));
+// 			else if (px_iter_tab[i][j] > 0.42 && px_iter_tab[i][j] <= 0.6425)
+// 				color = interpolate_color(colors[2], colors[3],
+// 						normalize_value(px_iter_tab[i][j], 0.42, 0.6425));
+// 			else if (px_iter_tab[i][j] > 0.6425 && px_iter_tab[i][j] <= 0.8575)
+// 				color = interpolate_color(colors[3], colors[4],
+// 						normalize_value(px_iter_tab[i][j], 0.6425, 0.8575));
+// 			else
+// 				color = interpolate_color(colors[3], colors[4],
+// 						normalize_value(px_iter_tab[i][j], 0.8573, 1));
+// 			my_mlx_px_put(img, j, i, color);
+// 		}
+// 	}
+// }
+
+void	color_gradient_px_put(t_data *img, int **px_iter_tab, int *colors)
 {
 	int	i;
 	int	j;
@@ -293,22 +327,8 @@ void	color_gradient_px_put(t_data *img, double **px_iter_tab, int *colors)
 		{
 			if (px_iter_tab[i][j] == 1)
 				color = create_trgb(0, 0, 0, 0);
-			else if (px_iter_tab[i][j] >= 0 && px_iter_tab[i][j] <= 0.16)
-				color = interpolate_color(colors[0], colors[1],
-						normalize_value(px_iter_tab[i][j], 0, 0.16));
-			else if (px_iter_tab[i][j] > 0.16 && px_iter_tab[i][j] <= 0.42)
-				color = interpolate_color(colors[1], colors[2],
-						normalize_value(px_iter_tab[i][j], 0.16, 0.42));
-			else if (px_iter_tab[i][j] > 0.42 && px_iter_tab[i][j] <= 0.6425)
-				color = interpolate_color(colors[2], colors[3],
-						normalize_value(px_iter_tab[i][j], 0.42, 0.6425));
-			else if (px_iter_tab[i][j] > 0.6425 && px_iter_tab[i][j] <= 0.8575)
-				color = interpolate_color(colors[3], colors[4],
-						normalize_value(px_iter_tab[i][j], 0.6425, 0.8575));
 			else
-				color = interpolate_color(colors[3], colors[4],
-						normalize_value(px_iter_tab[i][j], 0.8573, 1));
-			my_mlx_px_put(img, j, i, color);
+                my_mlx_px_put(img, j, i, colors[px_iter_tab[i][j]]);
 		}
 	}
 }
@@ -335,6 +355,36 @@ int *pick_color(int *colors_segments, int index)
     return (colors);
 }
 
+int *create_color_tab(int max_iter, int *colors_segments)
+{
+    int *colors;
+    int i;
+    int seg;
+
+    colors = malloc(sizeof(int) * max_iter);
+    if (!colors)
+        return (NULL);
+    seg = max_iter / 5;
+    i = 0;
+    while (i < max_iter)
+    {
+        if (i <= seg)
+            colors[i] = interpolate_color(colors_segments[0], colors_segments[1], normalize_value(i, 1, seg));
+        else if (i > seg && i <= seg * 2)
+            colors[i] = interpolate_color(colors_segments[1], colors_segments[2], normalize_value(i, seg, seg * 2));
+        else if (i > seg * 2 && i <= seg * 3)
+            colors[i] = interpolate_color(colors_segments[2], colors_segments[3], normalize_value(i, seg * 2, seg * 3));
+        else if (i > seg * 3 && i <= max_iter - seg)
+            colors[i] = interpolate_color(colors_segments[3], colors_segments[4], normalize_value(i, seg * 3, max_iter - seg));
+        else
+            colors[i] = interpolate_color(colors_segments[4], colors_segments[0], normalize_value(i, max_iter - seg, max_iter));
+        printf("colors[%d] = %d %d %d\n", i, get_r(colors[i]), get_g(colors[i]), get_b(colors[i]));
+        i++;
+    }
+    free(colors_segments);
+    return (colors);
+}
+
 int	*create_color_segments(void)
 {
 	int	*color_segments;
@@ -350,16 +400,16 @@ int	*create_color_segments(void)
 	return (color_segments);
 }
 
-double	**get_mandel_px_iter(t_data *img, t_range *range, int max_iter)
+int	**get_mandel_px_iter(t_data *img, t_range *range, int max_iter)
 {
 	int			i;
 	int			j;
 	int			mandel_i;
-	double		**px_iter_tab;
+	int		**px_iter_tab;
 	t_complex	px;
 
 	i = -1;
-	px_iter_tab = ft_alloc_tab_double(img->width, img->height);
+	px_iter_tab = ft_alloc_tab(img->width, img->height);
 	if (!px_iter_tab)
 		return (NULL);
 	while (++i < img->height)
@@ -378,18 +428,20 @@ double	**get_mandel_px_iter(t_data *img, t_range *range, int max_iter)
 
 void	fractal_master_func(t_data *img, t_range *range, int max_iter)
 {
-	double	**px_iter_tab;
+	int	**px_iter_tab;
 	int		*colors;
+    int     *color_tab;
 
 	px_iter_tab = get_mandel_px_iter(img, range, max_iter);
 	if (!px_iter_tab)
 		return ; // need to free color_tab
-	normalize_data(px_iter_tab, img->height, img->width);
+	// normalize_data(px_iter_tab, img->height, img->width);
 	colors = create_color_segments();
+    color_tab = create_color_tab(max_iter, colors);
 	if (!colors)
 		return ; // need to free color_tab
 	color_gradient_px_put(img, px_iter_tab, colors);
-	ft_free_tab(px_iter_tab, img->height);
+	// ft_free_tab(px_iter_tab, img->height);
 	// free(color_tab);
 }
 
@@ -477,7 +529,6 @@ int	handle_mouse_input(int key, int x, int y, t_mlx_win *data)
 
 int	handle_keyboard_input(int key, t_mlx_win *data)
 {
-	printf("key %d\n", key);
 	if (key == XK_Escape)
 	{
 		mlx_destroy_window(data->mlx, data->window);

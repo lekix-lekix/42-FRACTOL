@@ -6,13 +6,18 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 18:07:02 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/14 16:05:52 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/15 16:15:23 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./fractol.h"
 #include <math.h>
 #include <stdio.h>
+
+// void    block_calculating(int x_max, int y_max, int x, int y)
+// {
+    
+// }
 
 t_complex	binomial_squares(t_complex nb)
 { 
@@ -54,8 +59,10 @@ int	mandelbrot(int max_iter, t_complex nb)
     i = 0;
     result.real = 0;
     result.img = 0;
-    while (i < max_iter && fabs(result.real) < 3 && fabs(result.img) < 3)
+    while (i < max_iter)
     {
+        if (result.real * result.real + result.img * result.img > 3 * 3)
+            break ;
         result = calc_mandelbrot(result, nb);
         // printf("res = %f | %f\n", result.real, result.img);
         i++;
@@ -77,8 +84,10 @@ int julia(int max_iter, t_complex px, t_complex c_plot)
     i = 0;
     result.real = px.real;
     result.img = px.img;
-    while (i < max_iter && fabs(result.real) < 2 && fabs(result.img) < 2)
+    while (i < max_iter /* && fabs(result.real) < 2 && fabs(result.img) < 2 */)
     {
+        if (result.real * result.real + result.img * result.img > 3 * 3)
+            break ;
         result = calc_julia(result, c_plot);
         i++;
     }
