@@ -128,6 +128,21 @@ t_complex	pixel_to_complex(int x, int y, int width, int height,
 	return (coordinates);
 }
 
+t_complex	pixel_to_complex2(int x, int y, int width, int height,
+		t_range *range)
+{
+	t_complex	coordinates;
+	double		x_percent;
+	double		y_percent;
+
+	x_percent = (double)x / (double)width;
+	y_percent = (double)y / (double)height;
+	coordinates.real = range->min_x + (range->max_x - range->min_x) * x_percent;
+	coordinates.img = range->min_y + (range->max_y - range->min_y) * y_percent;
+	coordinates.img *= -1;
+	return (coordinates);
+}
+
 int	**ft_alloc_tab(int width, int height)
 {
 	register int	i;
@@ -159,13 +174,13 @@ double	**ft_alloc_tab_double(int width, int height)
 	double	**tab;
 
 	i = 0;
-	tab = malloc(sizeof(double *) * height + 1);
+	tab = malloc(sizeof(double *) * height);
 	if (!tab)
 		return (NULL);
 	while (i < height)
 	{
 		j = -1;
-		tab[i] = malloc(sizeof(double) * width + 1);
+		tab[i] = malloc(sizeof(double) * width);
 		while (++j < width)
 			tab[i][j] = 0;
 		i++;
@@ -259,10 +274,10 @@ void	normalize_data(double **data, int height, int width)
 	{
 		j = -1;
 		while (++j < width)
-        {
+		{
 			data[i][j] = normalize_value(data[i][j], min_val, max_val);
-            // printf("data[%d][%d] = %f\n", i, j, data[i][j]);
-        }
+			// printf("data[%d][%d] = %f\n", i, j, data[i][j]);
+		}
 	}
 }
 
@@ -292,7 +307,7 @@ void	color_gradient_px_put(t_data *img, double **px_iter_tab, int *colors)
 		while (++j < img->width)
 		{
 			if (px_iter_tab[i][j] == 1)
-				color = create_trgb(0, 0, 0, 0);
+				continue ;
 			else if (px_iter_tab[i][j] >= 0 && px_iter_tab[i][j] <= 0.16)
 				color = interpolate_color(colors[0], colors[1],
 						normalize_value(px_iter_tab[i][j], 0, 0.16));
@@ -313,26 +328,29 @@ void	color_gradient_px_put(t_data *img, double **px_iter_tab, int *colors)
 	}
 }
 
-int *pick_color(int *colors_segments, int index)
+int	*color_shift(int *colors_segments, int index)
 {
-    int i;
-    int j;
-    int *colors;
+	int	i;
+	int	j;
+	int	*colors;
 
-    colors = malloc(sizeof(int) * 5);
-    if (!colors)
-        return (NULL);
-    i = 0;
-    j = index;
-    while (i < 5)
-    {
-        if (j == 5)
-            j = 0;
-        colors[i] = colors_segments[j];
-        i++;
-        j++;
-    }
-    return (colors);
+	if (!index)
+		return (colors_segments);
+	colors = malloc(sizeof(int) * 5);
+	if (!colors)
+		return (NULL);
+	i = 0;
+	j = index;
+	while (i < 5)
+	{
+		if (j == 5)
+			j = 0;
+		colors[i] = colors_segments[j];
+		i++;
+		j++;
+	}
+	free(colors_segments);
+	return (colors);
 }
 
 int	*create_color_segments(void)
@@ -342,7 +360,7 @@ int	*create_color_segments(void)
 	color_segments = malloc(sizeof(int) * 5);
 	if (!color_segments)
 		return (NULL);
-	color_segments[0] = create_trgb(0, 255, 0, 0);
+	color_segments[0] = create_trgb(0, 50, 0, 200);
 	color_segments[1] = create_trgb(0, 255, 255, 0);
 	color_segments[2] = create_trgb(0, 0, 255, 0);
 	color_segments[3] = create_trgb(0, 0, 255, 255);
@@ -370,7 +388,7 @@ double	**get_mandel_px_iter(t_data *img, t_range *range, int max_iter)
 			px = pixel_to_complex(j, i, img->width, img->height, range);
 			mandel_i = mandelbrot(max_iter, px);
 			px_iter_tab[i][j] = mandel_i;
-            // printf("px_iter_tab[%d][%d] = %f\n", i, j, px_iter_tab[i][j]);
+			// printf("px_iter_tab[%d][%d] = %f\n", i, j, px_iter_tab[i][j]);
 		}
 	}
 	return (px_iter_tab);
@@ -388,6 +406,7 @@ void	fractal_master_func(t_data *img, t_range *range, int max_iter)
 	colors = create_color_segments();
 	if (!colors)
 		return ; // need to free color_tab
+	colors = color_shift(colors, range->colors_idx);
 	color_gradient_px_put(img, px_iter_tab, colors);
 	ft_free_tab(px_iter_tab, img->height);
 	// free(color_tab);
@@ -431,18 +450,52 @@ void	zoom_in(t_mlx_win *data)
 	data->range->max_y *= 0.5;
 }
 
+double	calc_abs_gap(double nb1, double nb2)
+{
+	double	abs_nb1;
+	double	abs_nb2;
+
+	abs_nb1 = fabs(nb1);
+	abs_nb2 = fabs(nb2);
+	if ((nb1 >= 0 && nb2 >= 0) || (nb1 <= 0 && nb2 <= 0))
+	{
+		if (abs_nb1 > abs_nb2)
+			return (fabs(abs_nb1 - abs_nb2));
+		else
+			return (fabs(abs_nb2 - abs_nb1));
+	}
+	else
+		return (abs_nb1 + abs_nb2);
+}
+
 void	translate_zoom_in(t_mlx_win *data)
 {
 	int			mouse_x;
 	int			mouse_y;
+    t_complex   middle;
 	t_complex	mouse_pos;
 
 	mlx_mouse_get_pos(data->mlx, data->window, &mouse_x, &mouse_y);
+    middle = pixel_to_complex2(data->width / 2, data->height / 2, data->width, data->height, data->range);
 	mouse_pos = pixel_to_complex(mouse_x, mouse_y, data->width, data->height,
 			data->range);
-	data->range->trans_x -= fabs(data->range->trans_x) - fabs(mouse_pos.real);
-	data->range->trans_y -= fabs(data->range->trans_y) - fabs(mouse_pos.img);
+    printf("midlde %f %f\n", middle.real, middle.img);
+	if (mouse_pos.real < middle.real)
+		data->range->trans_x -= fabs(data->range->trans_x)
+			- fabs(mouse_pos.real);
+	else
+		data->range->trans_x += fabs(data->range->trans_x)
+			- fabs(mouse_pos.real);
+	if (mouse_pos.img < middle.img)
+		data->range->trans_y += fabs(data->range->trans_y)
+			- fabs(mouse_pos.img);
+	else
+		data->range->trans_y -= fabs(data->range->trans_y)
+			- fabs(mouse_pos.img);
 	zoom_in(data);
+	printf("trans x = %f trans y %f\n", data->range->trans_x,
+		data->range->trans_y);
+	printf("mouse x %f mouse y %f\n", mouse_pos.real, mouse_pos.img);
 	init_fractal_img(data, data->range);
 }
 
@@ -506,10 +559,19 @@ int	handle_keyboard_input(int key, t_mlx_win *data)
 		data->range->c_plot.real -= 0.1;
 	if (key == 48)
 		data->range->max_iter = 200;
+	if (key == 99)
+	{
+		if (data->range->colors_idx == 5)
+			data->range->colors_idx = 0;
+		else
+			data->range->colors_idx++;
+	}
 	init_fractal_img(data, data->range);
-    // printf("cplot = real %f img %f\n", data->range->c_plot.real, data->range->c_plot.img);
+	// printf("cplot = real %f img %f\n", data->range->c_plot.real,
+	// data->range->c_plot.img);
 	return (0);
 }
+
 int	main(void)
 {
 	t_range		range;
@@ -521,8 +583,9 @@ int	main(void)
 	range.max_y = 3;
 	range.max_iter = 200;
 	range.c_plot.real = 0;
-	range.c_plot.img = -4;
-    range.trans_x = -0.5;
+	range.c_plot.img = 0;
+	range.trans_x = 0;
+	range.colors_idx = 0;
 	data.width = 1000;
 	data.height = 800;
 	data.mlx = mlx_init();
@@ -544,4 +607,4 @@ int	main(void)
 }
 
 // cc -Wall -Wextra -Werror -I ./minilibx-linux main.c mandelbrot.c
-	// -L ./minilibx-linux/ -lmlx -lXext -lX11 -lm -g3 -O3
+// -L ./minilibx-linux/ -lmlx -lXext -lX11 -lm -g3 -O3
