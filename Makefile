@@ -6,18 +6,29 @@
 #    By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/18 12:11:49 by kipouliq          #+#    #+#              #
-#    Updated: 2024/01/31 13:38:27 by kipouliq         ###   ########.fr        #
+#    Updated: 2024/02/19 18:44:12 by kipouliq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fractol
 
-SRC = ./main.c \
-		./mandelbrot.c
+SRCS = ./main.c \
+		./mandelbrot_julia.c \
+		./rgb.c \
+		./color_manipulation.c \
+		./normalization_conversion.c \
+		./mlx_display_functions.c \
+		./alloc_free.c \
+		./zoom_mouse_inputs.c \
+		./keyboard_inputs.c \
+		./math_stuff.c \
+		./color_palettes.c
 
 OBJ = $(SRC:.c=.o)
 
-CC = gcc
+CC = cc
+
+INCLUDE = -I
 
 FLAGS = -Wall -Wextra -Werror -g3
 
@@ -29,28 +40,27 @@ NEW_PATH_LIBFT = .
 
 LIBFT = ./megalibft/megalibft.a
 
-MLX_OPT = -lmlx -lXext
+MLX_FLAGS = -lmlx -lXext -lX11 -lm
 
 all : $(NAME)
 
 $(NAME) : $(OBJ)
-	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux $(SRC) -L /usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o $(NAME)
+	$(CC) $(FLAGS) $(INCLUDE) $(OBJ) $(PATH_MLX) $(SRCS) -L ./minilibx-linux/ $(MLX_FLAGS) -o $(NAME)
 
 bonus : $(BONUS_OBJS)
 	make -C $(PATH_LIBFT)
 	$(CC) $(FLAGS) $(BONUS_OBJS) $(LIBFT) -o $(NAME_BONUS) -g3 
 
 %.o:%.c
-	$(CC) $(FLAGS) -I $(PATH_LIBFT) -c $<  -o $@
+	$(CC) $(FLAGS) -I $(PATH_LIBFT) -c $< -o $@
 
 clean :
-	make -sC $(PATH_LIBFT) clean
+	# make -sC $(PATH_LIBFT) clean
 	rm -f *o
 
 fclean : clean
-	make -sC $(PATH_LIBFT) fclean
+	# make -sC $(PATH_LIBFT) fclean
 	rm -f $(NAME)
-	rm -f $(NAME_BONUS)
 
 re : fclean
 	make all
