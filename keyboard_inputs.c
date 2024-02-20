@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 18:04:34 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/19 18:43:38 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/20 14:41:53 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,7 @@ void	handle_key_inputs(int key, t_mlx_win *data)
 int	handle_keyboard_input(int key, t_mlx_win *data)
 {
 	if (key == ESCAPE)
-	{
-		mlx_destroy_window(data->mlx, data->window);
-		mlx_destroy_display(data->mlx);
-		exit(0);
-	}
+        ft_free_mlx(data);
 	else if (key == UP_ARROW || key == DOWN_ARROW || key == LEFT_ARROW
 		|| key == RIGHT_ARROW)
 		handle_arrow_inputs(key, data);

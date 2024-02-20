@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:36:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/19 18:41:51 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/20 15:28:44 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ typedef struct s_range
 	double		trans_x;
 	double		trans_y;
 	int			max_iter;
-    int         colors_palette;
+	int			colors_palette;
 	int			colors_idx;
 	t_complex	c_plot;
 }				t_range;
@@ -84,6 +84,7 @@ int				get_r(int trgb);
 int				get_g(int trgb);
 int				get_b(int trgb);
 
+t_data			*create_image(t_mlx_win *data);
 int				*create_color_segments(int palette_nb);
 int				*color_shift(int *colors_segments, int index);
 void			color_gradient_px_put(t_data *img, double **px_iter_tab,
@@ -98,31 +99,29 @@ int				init_fractal_img(t_mlx_win *data, t_range *range);
 
 double			**ft_alloc_tab_double(int width, int height);
 int				*ft_free_tab(double **tab, int height);
-int				**free_failed_alloc(int **tab, int i);
+double			**free_failed_alloc(double **tab, int i);
 
 int				handle_mouse_input(int key, int x, int y, t_mlx_win *data);
 int				handle_keyboard_input(int key, t_mlx_win *data);
-void			init_default_values(t_range *range, t_mlx_win *data, int palette_nb);
+void			init_default_values(t_range *range, t_mlx_win *data,
+					int palette_nb);
 
-t_complex	add_complex(t_complex nb1, t_complex nb2);
-t_complex	binomial_squares(t_complex nb);
+t_complex		add_complex(t_complex nb1, t_complex nb2);
+t_complex		binomial_squares(t_complex nb);
 
-void    palette_one(int *colors);
-void    palette_two(int *colors);
-void    palette_three(int *colors);
-void    palette_four(int *colors);
+void			palette_one(int *colors);
+void			palette_two(int *colors);
+void			palette_three(int *colors);
+void			palette_four(int *colors);
 
-
-// int	assign_color(float percent);
-// int	add_colors(int color_a, int color_b);
-// int	diff_colors(int color_a, int color_b);
-// int	color_multiply(int color, float mult);
-
-void			fractal_master_func(t_data *img, t_range *range, int max_iter);
+int				fractal_master_func(t_data *img, t_range *range, int max_iter);
 
 int				create_trgb(int t, int r, int g, int b);
 int				mandelbrot(int max_iter, t_complex nb);
 int				cardioid_check(t_complex nb);
 int				julia(int max_iter, t_complex nb, t_complex c_plot);
+
+int				ft_free_mlx(t_mlx_win *data);
+int				ft_atoi(const char *nptr);
 
 #endif

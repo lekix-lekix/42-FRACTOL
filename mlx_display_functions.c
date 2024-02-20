@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 17:07:18 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/19 17:09:26 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/20 12:27:44 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_data	*create_image(t_mlx_win *data)
 		return (NULL);
 	img->img = mlx_new_image(data->mlx, data->width, data->height);
 	if (!(img->img))
-		return (NULL);
+		return (free(img), NULL);
 	img->addr = mlx_get_data_addr(img->img, &img->bpp, &img->line_len,
 			&img->endian);
 	img->width = data->width;
@@ -37,15 +37,3 @@ t_data	*create_image(t_mlx_win *data)
 	return (img);
 }
 
-int	init_fractal_img(t_mlx_win *data, t_range *range)
-{
-	t_data	*img;
-
-	img = create_image(data);
-	if (!img)
-		return (-1);
-	fractal_master_func(img, range, range->max_iter);
-	mlx_put_image_to_window(data->mlx, data->window, img->img, 0, 0);
-	mlx_destroy_image(data->mlx, img->img);
-	return (0);
-}

@@ -6,7 +6,7 @@
 #    By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/18 12:11:49 by kipouliq          #+#    #+#              #
-#    Updated: 2024/02/19 18:44:12 by kipouliq         ###   ########.fr        #
+#    Updated: 2024/02/20 15:28:59 by kipouliq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,8 @@ SRCS = ./main.c \
 		./zoom_mouse_inputs.c \
 		./keyboard_inputs.c \
 		./math_stuff.c \
-		./color_palettes.c
+		./color_palettes.c \
+		./utils.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -40,7 +41,7 @@ NEW_PATH_LIBFT = .
 
 LIBFT = ./megalibft/megalibft.a
 
-MLX_FLAGS = -lmlx -lXext -lX11 -lm
+MLX_FLAGS = -lmlx -lXext -lX11
 
 all : $(NAME)
 

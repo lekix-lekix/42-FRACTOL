@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mandelbrot.c                                       :+:      :+:    :+:   */
+/*   mandelbrot_julia.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 18:07:02 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/19 18:11:17 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/20 18:20:16 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,25 @@ int julia(int max_iter, t_complex px, t_complex c_plot)
         i++;
     }
     return (i);
+}
+
+// t_complex calc_bship(t_complex result)
+// {
+//     result.real = 
+// }
+
+int burning_ship(int max_iter, t_complex px) 
+{
+    int i;
+    t_complex result;
+
+    i = 0;
+    result.real = 0;
+    result.img = 0;
+    while (i < max_iter)
+    {
+        if (result.real * result.real + result.img * result.img > 3 * 3)
+            return (i);
+        result = calc_bship(result);
+    }
 }

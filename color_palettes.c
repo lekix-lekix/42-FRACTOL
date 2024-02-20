@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 18:16:30 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/19 18:48:05 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/20 10:53:40 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,5 @@ void    palette_four(int *colors)
     colors[3] = create_trgb(0, 200, 116, 178);
     colors[4] = create_trgb(0, 245, 213, 224);      // purple haze
 }
-
 
 
