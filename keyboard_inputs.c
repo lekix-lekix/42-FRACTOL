@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 18:04:34 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/20 14:41:53 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/21 17:57:04 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	handle_arrow_inputs(int key, t_mlx_win *data)
 
 void	handle_key_inputs(int key, t_mlx_win *data)
 {
-	if (key == PLUS)
+    	if (key == PLUS)
 		data->range->max_iter += 50;
 	if (key == MINUS)
 		data->range->max_iter -= 35;
@@ -40,24 +40,37 @@ void	handle_key_inputs(int key, t_mlx_win *data)
 		data->range->c_plot.real -= 0.01;
 	if (key == KEY_0)
 		data->range->max_iter = 25;
+}
+
+void	handle_color_inputs(int key, t_range *range)
+{
 	if (key == C)
 	{
-		if (data->range->colors_idx == 4)
-			data->range->colors_idx = 0;
+		if (range->colors_idx == 4)
+			range->colors_idx = 0;
 		else
-			data->range->colors_idx++;
+			range->colors_idx++;
+	}
+	if (key == P)
+	{
+		if (range->colors_palette == 3)
+			range->colors_palette = 0;
+		else
+			range->colors_palette++;
 	}
 }
 
 int	handle_keyboard_input(int key, t_mlx_win *data)
 {
 	if (key == ESCAPE)
-        ft_free_mlx(data);
+		ft_free_mlx(data);
 	else if (key == UP_ARROW || key == DOWN_ARROW || key == LEFT_ARROW
 		|| key == RIGHT_ARROW)
 		handle_arrow_inputs(key, data);
 	else if (key == R)
-		init_default_values(data->range, data, data->range->colors_palette);
+		init_default_values(data->range, data);
+	else if (key == C || key == P)
+		handle_color_inputs(key, data->range);
 	else
 		handle_key_inputs(key, data);
 	init_fractal_img(data, data->range);

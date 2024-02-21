@@ -6,14 +6,14 @@
 #    By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/18 12:11:49 by kipouliq          #+#    #+#              #
-#    Updated: 2024/02/20 15:28:59 by kipouliq         ###   ########.fr        #
+#    Updated: 2024/02/21 18:10:45 by kipouliq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fractol
 
 SRCS = ./main.c \
-		./mandelbrot_julia.c \
+		./fractals_calc.c \
 		./rgb.c \
 		./color_manipulation.c \
 		./normalization_conversion.c \
@@ -23,7 +23,9 @@ SRCS = ./main.c \
 		./keyboard_inputs.c \
 		./math_stuff.c \
 		./color_palettes.c \
-		./utils.c
+		./args_parsing.c \
+		./utils.c \
+		./utils2.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -41,7 +43,7 @@ NEW_PATH_LIBFT = .
 
 LIBFT = ./megalibft/megalibft.a
 
-MLX_FLAGS = -lmlx -lXext -lX11
+MLX_FLAGS = -lmlx -lXext -lX11 -lm
 
 all : $(NAME)
 

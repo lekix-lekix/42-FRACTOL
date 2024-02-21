@@ -6,20 +6,12 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 15:27:58 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/20 17:55:47 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/21 16:52:13 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./fractol.h"
 #include "math.h"
-
-int     reverse_atoi_check(const char nptr, double nb)
-{
-    char *s1;
-    char *s2;
-
-    
-}
 
 double	atoi_conversion(const char *nptr)
 {
@@ -69,10 +61,4 @@ double	ft_atoi_double(const char *nptr)
 	if (neg)
 		nb = -nb;
 	return (nb);
-}
-
-int main(int argc, char **argv)
-{
-    (void) argc;
-    printf("nb = %f\n", ft_atoi_double(argv[1]));
 }
