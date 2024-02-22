@@ -6,11 +6,11 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 18:07:41 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 15:21:52 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:44:10 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./fractol.h"
+#include "../fractol.h"
 
 int	check_julia_values(char *str)
 {

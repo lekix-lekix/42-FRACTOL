@@ -6,11 +6,11 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 18:16:30 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 15:17:03 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:44:13 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./fractol.h"
+#include "../fractol.h"
 
 void	palette_one(int *colors)
 {

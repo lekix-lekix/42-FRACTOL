@@ -6,11 +6,11 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 17:15:49 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/20 14:36:38 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:44:04 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./fractol.h"
+#include "../fractol.h"
 
 double	**free_failed_alloc(double **tab, int i)
 {

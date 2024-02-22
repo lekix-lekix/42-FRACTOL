@@ -6,11 +6,11 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:24:27 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 15:05:39 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:44:11 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./fractol.h"
+#include "../fractol.h"
 
 int	interpolate_color(int color_a, int color_b, double t)
 {

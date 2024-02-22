@@ -6,11 +6,11 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 15:27:58 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 15:19:43 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:44:35 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./fractol.h"
+#include "../fractol.h"
 
 double	atoi_conversion(const char *nptr)
 {

@@ -6,11 +6,11 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 17:00:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 15:17:16 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:44:26 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./fractol.h"
+#include "../fractol.h"
 
 int	min(double **data, int height, int width)
 {

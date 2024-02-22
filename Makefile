@@ -6,25 +6,25 @@
 #    By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/18 12:11:49 by kipouliq          #+#    #+#              #
-#    Updated: 2024/02/22 15:27:19 by kipouliq         ###   ########.fr        #
+#    Updated: 2024/02/22 15:43:32 by kipouliq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fractol
 
-SRCS = ./main.c \
-		./fractals_calc.c \
-		./rgb.c \
-		./color_manipulation.c \
-		./normalization_conversion.c \
-		./mlx_display_functions.c \
-		./alloc_free.c \
-		./zoom_mouse_inputs.c \
-		./keyboard_inputs.c \
-		./math_stuff.c \
-		./color_palettes.c \
-		./args_parsing.c \
-		./utils.c
+SRCS = ./srcs/main.c \
+		./srcs/fractals_calc.c \
+		./srcs/rgb.c \
+		./srcs/color_manipulation.c \
+		./srcs/normalization_conversion.c \
+		./srcs/mlx_display_functions.c \
+		./srcs/alloc_free.c \
+		./srcs/zoom_mouse_inputs.c \
+		./srcs/keyboard_inputs.c \
+		./srcs/math_stuff.c \
+		./srcs/color_palettes.c \
+		./srcs/args_parsing.c \
+		./srcs/utils.c
 
 OBJ = $(SRCS:.c=.o)
 

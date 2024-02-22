@@ -6,11 +6,11 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 17:22:09 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 14:50:10 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:44:39 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./fractol.h"
+#include "../fractol.h"
 
 void	zoom_out(t_mlx_win *data)
 {

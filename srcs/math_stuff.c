@@ -6,11 +6,11 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 18:08:54 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 15:18:49 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:44:22 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./fractol.h"
+#include "../fractol.h"
 
 double	square(double nb)
 {

@@ -6,11 +6,11 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 18:07:02 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 15:20:06 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:44:15 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./fractol.h"
+#include "../fractol.h"
 
 t_complex	calc_mandelbrot(t_complex mandel, t_complex nb)
 {

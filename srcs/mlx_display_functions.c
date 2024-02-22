@@ -6,11 +6,11 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 17:07:18 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 15:18:17 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:44:25 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./fractol.h"
+#include "../fractol.h"
 
 void	my_mlx_px_put(t_data *img, int x, int y, int color)
 {
