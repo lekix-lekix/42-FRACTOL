@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 17:00:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/19 17:03:56 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:17:16 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,16 +52,14 @@ int	max(double **data, int height, int width)
 	return (max);
 }
 
-t_complex	pixel_to_complex(int x, int y, int width, int height,
-		t_range *range)
+t_complex	pixel_to_complex(int x, int y, t_mlx_win *data, t_range *range)
 {
 	t_complex	coordinates;
 	double		x_percent;
 	double		y_percent;
 
-	x_percent = (double)x / (double)width;
-	// ne pas faire a chaque fois pour opti
-	y_percent = (double)y / (double)height;
+	x_percent = (double)x / data->width;
+	y_percent = (double)y / data->height;
 	coordinates.real = range->min_x + (range->max_x - range->min_x) * x_percent
 		- range->trans_x;
 	coordinates.img = range->min_y + (range->max_y - range->min_y) * y_percent
@@ -76,10 +74,10 @@ double	normalize_value(double value, double min, double max)
 
 void	normalize_data(double **data, int height, int width)
 {
-	double min_val;
-	double max_val;
-	int i;
-	int j;
+	double	min_val;
+	double	max_val;
+	int		i;
+	int		j;
 
 	min_val = min(data, height, width);
 	max_val = max(data, height, width);

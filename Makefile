@@ -6,7 +6,7 @@
 #    By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/18 12:11:49 by kipouliq          #+#    #+#              #
-#    Updated: 2024/02/21 18:10:45 by kipouliq         ###   ########.fr        #
+#    Updated: 2024/02/22 15:14:05 by kipouliq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,16 +24,15 @@ SRCS = ./main.c \
 		./math_stuff.c \
 		./color_palettes.c \
 		./args_parsing.c \
-		./utils.c \
-		./utils2.c
+		./utils.c
 
-OBJ = $(SRC:.c=.o)
+OBJ = $(SRCS:.c=.o)
 
 CC = cc
 
 INCLUDE = -I
 
-FLAGS = -Wall -Wextra -Werror -g3
+FLAGS = -Wall -Wextra -Werror 
 
 PATH_MLX = ./minilibx-linux
 
@@ -43,26 +42,28 @@ NEW_PATH_LIBFT = .
 
 LIBFT = ./megalibft/megalibft.a
 
-MLX_FLAGS = -lmlx -lXext -lX11 -lm
+MLX = ./minilibx-linux/libmlx.a
+
+MLX_FLAGS = -lmlx -lXext -lX11 -lm 
 
 all : $(NAME)
 
 $(NAME) : $(OBJ)
-	$(CC) $(FLAGS) $(INCLUDE) $(OBJ) $(PATH_MLX) $(SRCS) -L ./minilibx-linux/ $(MLX_FLAGS) -o $(NAME)
-
-bonus : $(BONUS_OBJS)
 	make -C $(PATH_LIBFT)
-	$(CC) $(FLAGS) $(BONUS_OBJS) $(LIBFT) -o $(NAME_BONUS) -g3 
+	make -C $(PATH_MLX)
+	$(CC) $(FLAGS) $(OBJ) $(LIBFT) -L ./minilibx-linux $(MLX_FLAGS) -o $(NAME) -g3 -O2
 
 %.o:%.c
-	$(CC) $(FLAGS) -I $(PATH_LIBFT) -c $< -o $@
+	$(CC) $(FLAGS) -I $(PATH_LIBFT) -I $(PATH_MLX) -c $< -o $@
 
 clean :
-	# make -sC $(PATH_LIBFT) clean
+	make -C $(PATH_LIBFT) clean
+	make -C $(PATH_MLX) clean
 	rm -f *o
 
 fclean : clean
-	# make -sC $(PATH_LIBFT) fclean
+	make -C $(PATH_LIBFT) fclean
+	# make -C $(PATH_MLX) fclean
 	rm -f $(NAME)
 
 re : fclean

@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 17:07:18 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/21 18:10:01 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:18:17 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,10 @@ int	init_fractal_img(t_mlx_win *data, t_range *range)
 
 	img = create_image(data);
 	if (!img)
-		return (ft_free_mlx(data), -1); // malloc ok
-	if (fractal_master_func(img, range) == -1)
+		return (ft_free_mlx(data), -1);
+	if (fractal_master_func(data, img, range) == -1)
 	{
-		mlx_destroy_image(data->mlx, img->img); // malloc ok
+		mlx_destroy_image(data->mlx, img->img);
 		return (free(img), -1);
 	}
 	mlx_put_image_to_window(data->mlx, data->window, img->img, 0, 0);

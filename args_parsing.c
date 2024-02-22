@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 18:07:41 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/21 18:11:10 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:21:52 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	check_julia_values(char *str)
 	{
 		if (str[0] == '+' || str[0] == '-')
 			continue ;
-		if (!is_num(str[i]))
+		if (!ft_isdigit(str[i]))
 			return (0);
 		if (str[i] == '.')
 			comma++;
@@ -35,18 +35,25 @@ int	check_julia_values(char *str)
 
 int	args_parsing(int argc, char **argv, t_range *range)
 {
+	double	val1;
+	double	val2;
+
 	if (argc == 1 || !pick_a_fractal(argc, argv[1], range))
-		return (-1);
+		return (0);
 	if (range->fractal == 1)
 	{
 		if (!check_julia_values(argv[2]) || !check_julia_values(argv[3]))
-			return (-1);
+			return (0);
 		if (ft_strlen(argv[2]) > 9 || ft_strlen(argv[3]) > 9)
-			return (-1);
-		range->c_plot.real = ft_atoi_double(argv[2]);
-		range->c_plot.img = ft_atoi_double(argv[3]);
+			return (0);
+		val1 = ft_atoi_double(argv[2]);
+		val2 = ft_atoi_double(argv[3]);
+		if (fabs(val1) > 4 || fabs(val2) > 4)
+			return (0);
+		range->c_plot.real = val1;
+		range->c_plot.img = val2;
 	}
-	return (0);
+	return (1);
 }
 
 int	pick_a_fractal(int argc, char *str, t_range *range)
@@ -74,4 +81,3 @@ int	pick_a_fractal(int argc, char *str, t_range *range)
 	else
 		return (0);
 }
-

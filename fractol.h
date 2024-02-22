@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:36:00 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/21 18:11:23 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:13:50 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,12 @@
 # define PLUS 61
 # define MINUS 45
 # define KEY_0 48
+# include "./megalibft/megalibft.h"
 # include "./minilibx-linux/mlx.h"
 # include <math.h>
-# include <stdio.h>
 # include <stdlib.h>
 
-typedef int		(*fractal_func)();
+typedef int		(*t_fractal_func)();
 
 typedef struct s_complex
 {
@@ -94,8 +94,7 @@ int				*create_color_segments(int palette_nb);
 int				*color_shift(int *colors_segments, int index);
 void			color_gradient_px_put(t_data *img, double **px_iter_tab,
 					int *colors);
-t_complex		pixel_to_complex(int x, int y, int width, int height,
-					t_range *range);
+t_complex		pixel_to_complex(int x, int y, t_mlx_win *data, t_range *range);
 double			normalize_value(double value, double min, double max);
 void			normalize_data(double **data, int height, int width);
 
@@ -120,7 +119,8 @@ void			palette_two(int *colors);
 void			palette_three(int *colors);
 void			palette_four(int *colors);
 
-int				fractal_master_func(t_data *img, t_range *range);
+int				fractal_master_func(t_mlx_win *data, t_data *img,
+					t_range *range);
 
 int				create_trgb(int t, int r, int g, int b);
 int				mandelbrot(int max_iter, t_complex nb, t_complex c_plot);
@@ -130,12 +130,9 @@ int				burning_ship(int max_iter, t_complex px, t_complex c_plot);
 
 int				ft_free_mlx(t_mlx_win *data);
 double			ft_atoi_double(const char *nptr);
-
-int				ft_strncmp(const char *s1, const char *s2, size_t n);
-int				ft_strlen(char *str);
-int				is_num(char c);
-
 int				args_parsing(int argc, char **argv, t_range *range);
 int				pick_a_fractal(int argc, char *str, t_range *range);
+
+int				print_error(void);
 
 #endif

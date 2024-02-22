@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 18:04:34 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/21 17:57:04 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:18:33 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,24 @@
 
 void	handle_arrow_inputs(int key, t_mlx_win *data)
 {
+	double	shift_vert;
+	double	shift_hztal;
+
+	shift_vert = (data->range->max_x + fabs(data->range->min_x)) * 0.05;
+	shift_hztal = (data->range->max_y + fabs(data->range->min_y)) * 0.05;
 	if (key == UP_ARROW)
-		data->range->trans_y += 0.5;
+		data->range->trans_y += shift_vert;
 	if (key == DOWN_ARROW)
-		data->range->trans_y -= 0.5;
+		data->range->trans_y -= shift_vert;
 	if (key == LEFT_ARROW)
-		data->range->trans_x += 0.5;
+		data->range->trans_x += shift_hztal;
 	if (key == RIGHT_ARROW)
-		data->range->trans_x -= 0.5;
+		data->range->trans_x -= shift_hztal;
 }
 
 void	handle_key_inputs(int key, t_mlx_win *data)
 {
-    	if (key == PLUS)
+	if (key == PLUS)
 		data->range->max_iter += 50;
 	if (key == MINUS)
 		data->range->max_iter -= 35;

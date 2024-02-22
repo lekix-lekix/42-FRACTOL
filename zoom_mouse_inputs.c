@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 17:22:09 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/19 17:24:21 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 14:50:10 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	translate_zoom_in(t_mlx_win *data)
 	t_complex	mouse_pos;
 
 	mlx_mouse_get_pos(data->mlx, data->window, &mouse_x, &mouse_y);
-	mouse_pos = pixel_to_complex(mouse_x, mouse_y, data->width, data->height,
+	mouse_pos = pixel_to_complex(mouse_x, mouse_y, data,
 			data->range);
 	data->range->trans_x = mouse_pos.real * -1;
 	data->range->trans_y = mouse_pos.img * -1;
