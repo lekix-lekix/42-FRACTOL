@@ -6,7 +6,7 @@
 #    By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/18 12:11:49 by kipouliq          #+#    #+#              #
-#    Updated: 2024/02/22 15:43:32 by kipouliq         ###   ########.fr        #
+#    Updated: 2024/02/22 16:07:15 by kipouliq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,7 +59,7 @@ $(NAME) : $(OBJ)
 clean :
 	make -C $(PATH_LIBFT) clean
 	make -C $(PATH_MLX) clean
-	rm -f *o
+	rm -f ./srcs/*o
 
 fclean : clean
 	make -C $(PATH_LIBFT) fclean

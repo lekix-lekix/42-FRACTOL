@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 17:22:09 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 15:44:39 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/22 16:05:17 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	zoom_out(t_mlx_win *data)
 
 void	zoom_in(t_mlx_win *data)
 {
-	data->range->min_x *= 0.5;
+	data->range->min_x *= 0.5;  
 	data->range->max_x *= 0.5;
 	data->range->min_y *= 0.5;
 	data->range->max_y *= 0.5;
