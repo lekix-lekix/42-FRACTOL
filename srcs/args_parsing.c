@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 18:07:41 by kipouliq          #+#    #+#             */
-/*   Updated: 2024/02/22 15:44:10 by kipouliq         ###   ########.fr       */
+/*   Updated: 2024/02/23 16:21:55 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,13 @@ int	check_julia_values(char *str)
 	{
 		if (str[0] == '+' || str[0] == '-')
 			continue ;
+        if (str[i] == '.')
+        {
+			comma++;
+            continue ;
+        }
 		if (!ft_isdigit(str[i]))
 			return (0);
-		if (str[i] == '.')
-			comma++;
 	}
 	if (comma > 1)
 		return (0);
